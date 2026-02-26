@@ -4,12 +4,21 @@ const cors = require("cors");
 
 const storyRoutes = require("./routes/storyRoutes");
 const authRoutes = require("./routes/authRoutes");
-const nodeRoutes = require("./routes/nodeRoutes"); // ✅ FIXED
+const nodeRoutes = require("./routes/nodeRoutes"); 
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// ✅ Root route (adds clean homepage)
+app.get("/", (req, res) => {
+  res.json({
+    message: "StoryPath API is running",
+    status: "success",
+    version: "1.0.0"
+  });
+});
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", time: new Date().toISOString() });
