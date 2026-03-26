@@ -31,6 +31,24 @@ router.get("/", storyController.getAllStories);
 router.get("/:id/start", storyController.getStartNode);
 
 /**
+ * GET /api/stories/:id/graph
+ * Returns graph data (nodes + edges) for visual story-map rendering.
+ */
+router.get("/:id/graph", storyController.getStoryGraph);
+
+/**
+ * POST /api/stories/:id/track-play
+ * Increments play count for analytics.
+ */
+router.post("/:id/track-play", storyController.trackPlay);
+
+/**
+ * POST /api/stories/:id/track-completion
+ * Increments completion count for analytics.
+ */
+router.post("/:id/track-completion", storyController.trackCompletion);
+
+/**
  * GET /api/stories/users/:userId/profile
  * Retrieves a user's profile information and story count.
  */

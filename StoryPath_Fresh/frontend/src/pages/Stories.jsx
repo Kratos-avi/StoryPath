@@ -11,7 +11,7 @@
  * Accessible to both authenticated and unauthenticated users.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -31,7 +31,11 @@ export default function Stories() {
   // ============= ACTION STATES =============
   const [deletingStoryId, setDeletingStoryId] = useState(null); // Delete in progress
   const [forkingStoryId, setForkingStoryId] = useState(null);   // Fork in progress
-  const [searchQuery, setSearchQuery] = useState("");           // Search filter
+  const [searchInput, setSearchInput] = useState("");           // Search input (raw)
+  const [searchQuery, setSearchQuery] = useState("");           // Search query (debounced)
+  const [sortBy, setSortBy] = useState("newest");               // Sort order
+  const [visibilityFilter, setVisibilityFilter] = useState("all"); // all | mine | community
+  const [copiedStoryId, setCopiedStoryId] = useState(null);      // Story id for copied link feedback
 
   const load = async (search = "") => {
     setLoading(true);
@@ -47,9 +51,55 @@ export default function Stories() {
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearchQuery(searchInput.trim());
+    }, 350);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
+
+  useEffect(() => {
     load(searchQuery);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (!copiedStoryId) return undefined;
+    const timeoutId = setTimeout(() => setCopiedStoryId(null), 1200);
+    return () => clearTimeout(timeoutId);
+  }, [copiedStoryId]);
+
+  const visibleStories = useMemo(() => {
+    const mine = (story) => Number(user?.id) === Number(story?.userId);
+
+    const filtered = stories.filter((story) => {
+      if (visibilityFilter === "mine") return mine(story);
+      if (visibilityFilter === "community") return !mine(story);
+      return true;
+    });
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === "title-asc") {
+        return String(a.title || "").localeCompare(String(b.title || ""));
+      }
+      if (sortBy === "title-desc") {
+        return String(b.title || "").localeCompare(String(a.title || ""));
+      }
+
+      const timeA = new Date(a?.createdAt || 0).getTime();
+      const timeB = new Date(b?.createdAt || 0).getTime();
+
+      if (sortBy === "oldest") return timeA - timeB;
+      return timeB - timeA;
+    });
+
+    return sorted;
+  }, [stories, sortBy, visibilityFilter, user?.id]);
+
+  const ownedCount = useMemo(
+    () => stories.filter((story) => Number(story?.userId) === Number(user?.id)).length,
+    [stories, user?.id]
+  );
 
   const deleteStory = async (storyId, storyTitle) => {
     const confirmed = window.confirm(`Delete story "${storyTitle}"? This action cannot be undone.`);
@@ -87,6 +137,17 @@ export default function Stories() {
     }
   };
 
+  const copyPlayLink = async (storyId) => {
+    try {
+      const link = `${window.location.origin}/stories/${storyId}/play`;
+      await navigator.clipboard.writeText(link);
+      setCopiedStoryId(storyId);
+      setError("");
+    } catch (_err) {
+      setError("Could not copy link. Please copy the URL from browser address bar.");
+    }
+  };
+
   return (
     <div className="container">
       <div className="panel animIn">
@@ -99,20 +160,57 @@ export default function Stories() {
           <button className="btn btnGhost" onClick={() => load(searchQuery)}>Refresh</button>
         </div>
 
+        <div className="controlRow">
+          <div className="chip small">
+            <span className="chipDot" />
+            {loading ? "Loading..." : `${visibleStories.length} shown`}
+          </div>
+          <div className="chip small">
+            <span className="chipDot" />
+            {`Your stories: ${ownedCount}`}
+          </div>
+        </div>
+
         <div className="searchRow">
           <input
             type="text"
             placeholder="Search stories by title..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="searchInput"
           />
+          <select
+            className="selectInput"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title-asc">Title A-Z</option>
+            <option value="title-desc">Title Z-A</option>
+          </select>
+          <select
+            className="selectInput"
+            value={visibilityFilter}
+            onChange={(e) => setVisibilityFilter(e.target.value)}
+          >
+            <option value="all">All Stories</option>
+            <option value="community">Community</option>
+            <option value="mine">My Stories</option>
+          </select>
+          <button
+            type="button"
+            className="btn btnGhost"
+            onClick={() => setSearchInput("")}
+          >
+            Clear
+          </button>
         </div>
 
         {error ? <div className="alert error">{error}</div> : null}
         {loading ? <div className="alert ok">Loading stories…</div> : null}
 
-        {!loading && stories.length === 0 ? (
+        {!loading && visibleStories.length === 0 ? (
           <div className="empty">
             <div className="emptyTitle">No stories found.</div>
             <div className="muted">{searchQuery ? "Try a different search." : "Create one from Dashboard after login."}</div>
@@ -120,7 +218,7 @@ export default function Stories() {
         ) : null}
 
         <div className="cards">
-          {stories.map((s, idx) => (
+          {visibleStories.map((s, idx) => (
             <div key={s.id} className={`storyCard animIn ${idx % 2 ? "delay1" : ""}`}>
               {Number(user?.id) === Number(s?.userId) ? (
                 <div className="chip small">
@@ -138,12 +236,22 @@ export default function Stories() {
                 </div>
                 <div className="chip small">
                   <span className="chipDot" />
-                  playable
+                  {s.isPublished ? "published" : "draft"}
                 </div>
               </div>
               <div className="storyDesc">{s.description}</div>
+              <div className="kicker" style={{ marginTop: "8px" }}>
+                {`Plays ${s.playCount || 0} | Completions ${s.completionCount || 0}`}
+              </div>
               <div className="storyActions">
                 <Link className="btn btnPrimary" to={`/stories/${s.id}/play`}>Play</Link>
+                <button
+                  type="button"
+                  className="btn btnGhost"
+                  onClick={() => copyPlayLink(s.id)}
+                >
+                  {copiedStoryId === s.id ? "Copied" : "Share"}
+                </button>
                 {Number(user?.id) !== Number(s?.userId) ? (
                   <button
                     type="button"

@@ -22,6 +22,9 @@ model Story {
   title       String
   description String?
   createdAt   DateTime  @default(now())
+  isPublished Boolean   @default(false)
+  playCount   Int       @default(0)
+  completionCount Int   @default(0)
 
   userId Int
   user   User @relation(fields: [userId], references: [id])

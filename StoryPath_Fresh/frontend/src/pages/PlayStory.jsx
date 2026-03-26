@@ -11,7 +11,7 @@
  * Publicly accessible - any user can play any story.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
 
@@ -43,9 +43,13 @@ export default function PlayStory() {
   const [trail, setTrail] = useState([]);          // History of visited nodes for back button
   const [error, setError] = useState("");           // Error messages for user
   const [loadingNext, setLoadingNext] = useState(false); // Loading state during navigation
+  const playTrackedRef = useRef(false);
+  const completionTrackedRef = useRef(false);
 
   const load = async () => {
     setError("");
+    playTrackedRef.current = false;
+    completionTrackedRef.current = false;
     try {
       const s = await api.get(`/stories/${id}`);
       setStory(s.data);
@@ -53,6 +57,23 @@ export default function PlayStory() {
       const start = await api.get(`/stories/${id}/start`);
       setNode(start.data);
       setTrail([start.data.id]);
+
+      if (!playTrackedRef.current) {
+        playTrackedRef.current = true;
+        api
+          .post(`/stories/${id}/track-play`)
+          .then((res) => {
+            setStory((prev) => ({
+              ...(prev || {}),
+              playCount: res?.data?.playCount ?? prev?.playCount ?? 0,
+              completionCount:
+                res?.data?.completionCount ?? prev?.completionCount ?? 0,
+            }));
+          })
+          .catch(() => {
+            // Ignore analytics failures to avoid interrupting playback.
+          });
+      }
     } catch (e) {
       setError(e?.response?.data?.message || "Cannot play this story yet (missing start node).");
     }
@@ -97,6 +118,27 @@ export default function PlayStory() {
 
   const options = normalizeOptions(node?.options);
 
+  useEffect(() => {
+    if (!node) return;
+    if (options.length > 0) return;
+    if (completionTrackedRef.current) return;
+
+    completionTrackedRef.current = true;
+    api
+      .post(`/stories/${id}/track-completion`)
+      .then((res) => {
+        setStory((prev) => ({
+          ...(prev || {}),
+          playCount: res?.data?.playCount ?? prev?.playCount ?? 0,
+          completionCount:
+            res?.data?.completionCount ?? prev?.completionCount ?? 0,
+        }));
+      })
+      .catch(() => {
+        // Ignore analytics failures to avoid interrupting playback.
+      });
+  }, [id, node, options.length]);
+
   return (
     <div className="container">
       <div className="panel animIn">
@@ -105,6 +147,9 @@ export default function PlayStory() {
             <div className="kicker">PLAY MODE</div>
             <h1 className="panelBigTitle">{story?.title || "Story"}</h1>
             <p className="panelText">{story?.description}</p>
+            <div className="kicker" style={{ marginTop: "6px" }}>
+              {`Plays ${story?.playCount || 0} | Completions ${story?.completionCount || 0}`}
+            </div>
           </div>
           <button type="button" className="btn btnGhost" onClick={load}>Restart</button>
         </div>

@@ -38,8 +38,7 @@ body{
   background:
     radial-gradient(900px 700px at 15% 10%, rgba(75,210,255,.16), transparent 60%),
     radial-gradient(900px 700px at 90% 30%, rgba(37,255,181,.12), transparent 60%),
-    linear-gradient(180deg, rgba(7,8,12,0.88), rgba(6,7,10,0.93)),
-    url("/bg.jpg");
+    linear-gradient(180deg, rgba(7,8,12,0.88), rgba(6,7,10,0.93));
   background-size: cover;
   background-position: center;
   background-attachment: scroll;
@@ -985,4 +984,91 @@ textarea{
   font-size: 24px;
   font-weight: 950;
   color: var(--accent);
+}
+
+.storyDesc{
+  margin-top: 10px;
+  color: rgba(235,238,255,.85);
+  line-height: 1.55;
+}
+
+.panelBigTitle{
+  margin:0;
+  font-size: 30px;
+  letter-spacing: .01em;
+  line-height: 1.1;
+}
+
+.controlRow{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.selectInput{
+  min-width: 140px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.26);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.selectInput:focus{
+  outline: none;
+  border-color: rgba(75,210,255,0.30);
+  background: rgba(0,0,0,0.36);
+}
+
+.graphWrap{
+  margin-top: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  background: rgba(0,0,0,0.24);
+  overflow: hidden;
+}
+
+.storyGraph{
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 260px;
+}
+
+.graphEdge{
+  stroke: rgba(75,210,255,.70);
+  stroke-width: 2;
+}
+
+.graphNode{
+  fill: rgba(12,22,32,.94);
+  stroke: rgba(75,210,255,.76);
+  stroke-width: 2;
+}
+
+.graphNodeStart{
+  fill: rgba(14,30,28,.96);
+  stroke: rgba(37,255,181,.95);
+}
+
+.graphNodeText{
+  fill: rgba(242,245,255,.96);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+@media (max-width: 860px){
+  .searchRow{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .selectInput{
+    width: 100%;
+  }
 }

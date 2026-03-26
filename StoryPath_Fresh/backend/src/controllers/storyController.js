@@ -15,6 +15,23 @@
 
 const prisma = require("../utils/prismaClient");
 const { Prisma } = require("@prisma/client");
+const jwt = require("jsonwebtoken");
+
+const getOptionalUserId = (req) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return null;
+
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer") return null;
+
+  try {
+    const jwtSecret = process.env.JWT_SECRET || "secret123";
+    const decoded = jwt.verify(parts[1], jwtSecret);
+    return decoded.userId ?? null;
+  } catch (_err) {
+    return null;
+  }
+};
 
 /**
  * GET /api/stories
@@ -35,9 +52,12 @@ exports.getAllStories = async (req, res) => {
     
     // Build WHERE clause for search filtering
     // MySQL is case-insensitive by default, so we don't need mode: "insensitive"
-    const where = search && search.trim() 
-      ? { title: { contains: search.trim() } }
-      : undefined;
+    const where = {
+      isPublished: true,
+      ...(search && search.trim()
+        ? { title: { contains: search.trim() } }
+        : {}),
+    };
 
     // Fetch all (or filtered) stories ordered by newest first
     const stories = await prisma.story.findMany({
@@ -120,6 +140,11 @@ exports.getStoryById = async (req, res) => {
     // Return 404 if story doesn't exist
     if (!story) return res.status(404).json({ message: "Story not found" });
 
+    const viewerUserId = getOptionalUserId(req);
+    if (!story.isPublished && Number(story.userId) !== Number(viewerUserId)) {
+      return res.status(403).json({ message: "Story is in draft mode" });
+    }
+
     res.json(story);
   } catch (err) {
     console.error("getStoryById error:", err);
@@ -147,6 +172,11 @@ exports.getStartNode = async (req, res) => {
     // Fetch story to check if start node is configured
     const story = await prisma.story.findUnique({ where: { id } });
     if (!story) return res.status(404).json({ message: "Story not found" });
+
+    const viewerUserId = getOptionalUserId(req);
+    if (!story.isPublished && Number(story.userId) !== Number(viewerUserId)) {
+      return res.status(403).json({ message: "Story is in draft mode" });
+    }
 
     // Check if story has a start node assigned
     if (!story.startNodeId) {
@@ -227,6 +257,9 @@ exports.createStory = async (req, res) => {
         title: title.trim(),
         description: description?.trim() || "",
         userId: req.userId, // ✅ This must exist
+        isPublished: false,
+        playCount: 0,
+        completionCount: 0,
       },
       include: {
         user: { select: { id: true, name: true, email: true } },
@@ -267,7 +300,7 @@ exports.createStory = async (req, res) => {
 exports.updateStory = async (req, res) => {
   try {
     const id = Number(req.params.id);
-    const { title, description, startNodeId } = req.body;
+    const { title, description, startNodeId, isPublished } = req.body;
 
     const story = await prisma.story.findUnique({ where: { id } });
     if (!story) return res.status(404).json({ message: "Story not found" });
@@ -301,6 +334,8 @@ exports.updateStory = async (req, res) => {
         title: title?.trim() ?? story.title,
         description: description?.trim() ?? story.description,
         startNodeId: nextStartNodeId,
+        isPublished:
+          typeof isPublished === "boolean" ? isPublished : story.isPublished,
       },
       include: { user: { select: { id: true, name: true, email: true } } },
     });
@@ -308,6 +343,110 @@ exports.updateStory = async (req, res) => {
     res.json(updated);
   } catch (err) {
     console.error("updateStory error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getStoryGraph = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    const story = await prisma.story.findUnique({ where: { id } });
+    if (!story) return res.status(404).json({ message: "Story not found" });
+
+    const viewerUserId = getOptionalUserId(req);
+    if (!story.isPublished && Number(story.userId) !== Number(viewerUserId)) {
+      return res.status(403).json({ message: "Story is in draft mode" });
+    }
+
+    const nodes = await prisma.storyNode.findMany({
+      where: { storyId: id },
+      orderBy: { id: "asc" },
+      select: {
+        id: true,
+        content: true,
+        options: true,
+      },
+    });
+
+    const edges = [];
+    nodes.forEach((node) => {
+      if (!Array.isArray(node.options)) return;
+      node.options.forEach((opt, idx) => {
+        const targetId = Number(opt?.nextNodeId);
+        if (Number.isNaN(targetId)) return;
+        edges.push({
+          id: `${node.id}-${targetId}-${idx}`,
+          from: node.id,
+          to: targetId,
+          label: String(opt?.text || "").trim(),
+        });
+      });
+    });
+
+    res.json({
+      story: {
+        id: story.id,
+        title: story.title,
+        startNodeId: story.startNodeId,
+      },
+      nodes,
+      edges,
+    });
+  } catch (err) {
+    console.error("getStoryGraph error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.trackPlay = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const story = await prisma.story.findUnique({ where: { id } });
+    if (!story) return res.status(404).json({ message: "Story not found" });
+
+    if (!story.isPublished) {
+      const viewerUserId = getOptionalUserId(req);
+      if (Number(story.userId) !== Number(viewerUserId)) {
+        return res.status(403).json({ message: "Story is in draft mode" });
+      }
+    }
+
+    const updated = await prisma.story.update({
+      where: { id },
+      data: { playCount: { increment: 1 } },
+      select: { id: true, playCount: true, completionCount: true },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("trackPlay error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.trackCompletion = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const story = await prisma.story.findUnique({ where: { id } });
+    if (!story) return res.status(404).json({ message: "Story not found" });
+
+    if (!story.isPublished) {
+      const viewerUserId = getOptionalUserId(req);
+      if (Number(story.userId) !== Number(viewerUserId)) {
+        return res.status(403).json({ message: "Story is in draft mode" });
+      }
+    }
+
+    const updated = await prisma.story.update({
+      where: { id },
+      data: { completionCount: { increment: 1 } },
+      select: { id: true, playCount: true, completionCount: true },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("trackCompletion error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -406,7 +545,7 @@ exports.getUserStories = async (req, res) => {
     }
 
     const stories = await prisma.story.findMany({
-      where: { userId },
+      where: { userId, isPublished: true },
       orderBy: { createdAt: "desc" },
       include: {
         user: { select: { id: true, name: true, email: true } },
@@ -460,6 +599,9 @@ exports.forkStory = async (req, res) => {
         title: `${originalStory.title} (Remix)`,
         description: originalStory.description,
         userId: req.userId,
+        isPublished: false,
+        playCount: 0,
+        completionCount: 0,
       },
     });
 

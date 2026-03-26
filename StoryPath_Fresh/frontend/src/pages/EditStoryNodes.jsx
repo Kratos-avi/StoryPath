@@ -12,7 +12,7 @@
  * Requires authentication and story ownership.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
 
@@ -77,11 +77,13 @@ const parseOptionsFromText = (text) => {
 
 export default function EditStoryNodes() {
   const { id } = useParams();
+  const draftStorageKey = `storypath-node-drafts-${id}`;
 
   // ============= STATE VARIABLES =============
   const [story, setStory] = useState(null);           // Story metadata
   const [nodes, setNodes] = useState([]);             // All story nodes
   const [nodeDrafts, setNodeDrafts] = useState({});   // Draft edits for each node
+  const [serverDraftSnapshot, setServerDraftSnapshot] = useState({}); // Last loaded snapshot from server
   const [savingNodeId, setSavingNodeId] = useState(null);    // Node being saved
   const [deletingNodeId, setDeletingNodeId] = useState(null); // Node being deleted
   const [settingStartId, setSettingStartId] = useState(null); // Setting start node
@@ -101,21 +103,148 @@ export default function EditStoryNodes() {
 
       const n = await api.get(`/stories/${id}/nodes`);
       setNodes(n.data);
-      setNodeDrafts(
-        n.data.reduce((acc, node) => {
+      const nextDrafts = n.data.reduce((acc, node) => {
           acc[node.id] = {
             content: node.content || "",
             optionsText: formatOptionsAsText(node.options),
           };
           return acc;
-        }, {})
-      );
+        }, {});
+
+      setServerDraftSnapshot(nextDrafts);
+
+      const localDraftsRaw = localStorage.getItem(draftStorageKey);
+      if (localDraftsRaw) {
+        try {
+          const localDrafts = JSON.parse(localDraftsRaw);
+          const mergedDrafts = { ...nextDrafts };
+
+          Object.keys(localDrafts || {}).forEach((nodeId) => {
+            if (mergedDrafts[nodeId]) {
+              mergedDrafts[nodeId] = {
+                ...mergedDrafts[nodeId],
+                ...localDrafts[nodeId],
+              };
+            }
+          });
+
+          setNodeDrafts(mergedDrafts);
+        } catch (_err) {
+          setNodeDrafts(nextDrafts);
+        }
+      } else {
+        setNodeDrafts(nextDrafts);
+      }
     } catch (e) {
       setError(e?.response?.data?.message || "Failed to load story/nodes");
     }
   };
 
   useEffect(() => { load(); }, [id]);
+
+  useEffect(() => {
+    if (!Object.keys(nodeDrafts).length) return undefined;
+
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem(draftStorageKey, JSON.stringify(nodeDrafts));
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [nodeDrafts, draftStorageKey]);
+
+  const hasUnsavedChanges = useMemo(() => {
+    return JSON.stringify(nodeDrafts) !== JSON.stringify(serverDraftSnapshot);
+  }, [nodeDrafts, serverDraftSnapshot]);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return undefined;
+
+    const onBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  const draftSummary = useMemo(() => {
+    const allNodeIds = new Set(nodes.map((node) => Number(node.id)));
+    let linkCount = 0;
+    const brokenLinks = [];
+
+    Object.entries(nodeDrafts).forEach(([nodeId, draft]) => {
+      if (!draft) return;
+
+      try {
+        const parsed = parseOptionsFromText(draft.optionsText || "");
+        linkCount += parsed.length;
+
+        parsed.forEach((choice) => {
+          const nextId = Number(choice.nextNodeId);
+          if (!allNodeIds.has(nextId)) {
+            brokenLinks.push(`#${nodeId} -> #${nextId}`);
+          }
+        });
+      } catch (_err) {
+        // Ignore parse errors in summary; save action still validates strictly.
+      }
+    });
+
+    return {
+      nodeCount: nodes.length,
+      linkCount,
+      brokenLinks,
+    };
+  }, [nodeDrafts, nodes]);
+
+  const graphData = useMemo(() => {
+    const nodeIds = nodes.map((node) => Number(node.id));
+    const nodeIdSet = new Set(nodeIds);
+    const total = nodes.length || 1;
+    const centerX = 380;
+    const centerY = 220;
+    const radius = Math.max(110, Math.min(180, total * 24));
+
+    const graphNodes = nodes.map((node, index) => {
+      const angle = (Math.PI * 2 * index) / total - Math.PI / 2;
+      return {
+        id: Number(node.id),
+        label: `#${node.id}`,
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+        isStart: Number(story?.startNodeId) === Number(node.id),
+      };
+    });
+
+    const byId = Object.fromEntries(graphNodes.map((node) => [node.id, node]));
+    const graphEdges = [];
+
+    Object.entries(nodeDrafts).forEach(([nodeId, draft]) => {
+      if (!draft) return;
+      try {
+        const parsed = parseOptionsFromText(draft.optionsText || "");
+        parsed.forEach((choice, idx) => {
+          const fromId = Number(nodeId);
+          const toId = Number(choice.nextNodeId);
+
+          if (!nodeIdSet.has(fromId) || !nodeIdSet.has(toId)) return;
+          if (!byId[fromId] || !byId[toId]) return;
+
+          graphEdges.push({
+            id: `${fromId}-${toId}-${idx}`,
+            fromId,
+            toId,
+            label: choice.text,
+          });
+        });
+      } catch (_err) {
+        // Ignore parse errors in graph rendering.
+      }
+    });
+
+    return { graphNodes, graphEdges, byId };
+  }, [nodes, nodeDrafts, story?.startNodeId]);
 
   const addNode = async (e) => {
     e.preventDefault();
@@ -197,6 +326,13 @@ export default function EditStoryNodes() {
     }
   };
 
+  const discardLocalDrafts = () => {
+    localStorage.removeItem(draftStorageKey);
+    setNodeDrafts(serverDraftSnapshot);
+    setMsg("Local drafts discarded");
+    setError("");
+  };
+
   return (
     <div className="container">
       <div className="panel animIn">
@@ -213,6 +349,99 @@ export default function EditStoryNodes() {
 
         {msg ? <div className="alert ok">{msg}</div> : null}
         {error ? <div className="alert error">{error}</div> : null}
+
+        <div className="controlRow">
+          <div className="chip small">
+            <span className="chipDot" />
+            {`Nodes ${draftSummary.nodeCount}`}
+          </div>
+          <div className="chip small">
+            <span className="chipDot" />
+            {`Links ${draftSummary.linkCount}`}
+          </div>
+          <div className="chip small">
+            <span className="chipDot" />
+            {hasUnsavedChanges ? "Unsaved drafts" : "All changes saved"}
+          </div>
+          <button type="button" className="btn btnGhost" onClick={discardLocalDrafts}>
+            Discard Local Drafts
+          </button>
+        </div>
+
+        {draftSummary.brokenLinks.length > 0 ? (
+          <div className="alert error">
+            {`Possible broken links: ${draftSummary.brokenLinks.slice(0, 4).join(", ")}${draftSummary.brokenLinks.length > 4 ? " ..." : ""}`}
+          </div>
+        ) : null}
+
+        <div className="subPanel" style={{ marginBottom: "16px" }}>
+          <div className="panelHeader">
+            <div>
+              <div className="kicker">Story Graph View</div>
+              <h2 className="subTitle" style={{ margin: 0 }}>Branching Map</h2>
+            </div>
+            <div className="chip small">
+              <span className="chipDot" />
+              {`${graphData.graphNodes.length} nodes / ${graphData.graphEdges.length} links`}
+            </div>
+          </div>
+
+          {graphData.graphNodes.length === 0 ? (
+            <div className="empty">
+              <div className="emptyTitle">Graph will appear after adding nodes.</div>
+            </div>
+          ) : (
+            <div className="graphWrap">
+              <svg viewBox="0 0 760 440" className="storyGraph" role="img" aria-label="Story graph view">
+                <defs>
+                  <marker
+                    id="graphArrow"
+                    markerWidth="10"
+                    markerHeight="8"
+                    refX="9"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0,0 L10,4 L0,8 z" fill="rgba(75,210,255,.82)" />
+                  </marker>
+                </defs>
+
+                {graphData.graphEdges.map((edge) => {
+                  const from = graphData.byId[edge.fromId];
+                  const to = graphData.byId[edge.toId];
+                  if (!from || !to) return null;
+
+                  return (
+                    <g key={edge.id}>
+                      <line
+                        x1={from.x}
+                        y1={from.y}
+                        x2={to.x}
+                        y2={to.y}
+                        className="graphEdge"
+                        markerEnd="url(#graphArrow)"
+                      />
+                    </g>
+                  );
+                })}
+
+                {graphData.graphNodes.map((node) => (
+                  <g key={node.id}>
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r={node.isStart ? 26 : 22}
+                      className={node.isStart ? "graphNode graphNodeStart" : "graphNode"}
+                    />
+                    <text x={node.x} y={node.y + 4} textAnchor="middle" className="graphNodeText">
+                      {node.label}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+            </div>
+          )}
+        </div>
 
         <div className="grid2">
           <div className="subPanel">
