@@ -1,6 +1,18 @@
+/**
+ * Home / Landing Page
+ * 
+ * Marketing and entry point for the application.
+ * Introduces StoryPath features and adapts call-to-action links
+ * based on user authentication state.
+ */
+
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+/**
+ * Home Component
+ * Displays hero section, feature overview, and Quick start guide
+ */
 export default function Home() {
   const { user } = useAuth();
 

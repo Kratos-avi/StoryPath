@@ -1,2 +1,6 @@
 {
+    "cSpell.words": [
+        "STORYPATH"
+    ],
+    "chat.agent.maxRequests": 100
 }

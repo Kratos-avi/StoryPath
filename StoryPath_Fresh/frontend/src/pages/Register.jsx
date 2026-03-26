@@ -1,7 +1,19 @@
+/**
+ * User Registration Page
+ * 
+ * Allows new users to create accounts with name, email, and password.
+ * On successful registration, automatically logs in and redirects to dashboard.
+ * Includes link to login for existing users.
+ */
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+/**
+ * Register Component
+ * Displays registration form with name, email, and password fields
+ */
 export default function Register() {
   const nav = useNavigate();
   const { register, loading } = useAuth();

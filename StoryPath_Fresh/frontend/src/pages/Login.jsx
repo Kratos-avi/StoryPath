@@ -1,7 +1,19 @@
+/**
+ * User Login Page
+ * 
+ * Allows existing users to authenticate with email and password.
+ * On successful login, redirects to creator dashboard.
+ * Includes link to register for new users.
+ */
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+/**
+ * Login Component
+ * Displays login form with email/password fields and error handling
+ */
 export default function Login() {
   const nav = useNavigate();
   const { login, loading } = useAuth();

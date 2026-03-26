@@ -1,6 +1,6 @@
 const prisma = require("../utils/prismaClient");
 
-// GET /api/stories/:storyId/nodes
+// Lists all nodes in story order for editor/play setup.
 exports.getNodesForStory = async (req, res) => {
   try {
     const storyId = Number(req.params.storyId);
@@ -17,7 +17,7 @@ exports.getNodesForStory = async (req, res) => {
   }
 };
 
-// GET /api/nodes/:id
+// Returns one node by id.
 exports.getNodeById = async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -35,7 +35,7 @@ exports.getNodeById = async (req, res) => {
   }
 };
 
-// POST /api/stories/:storyId/nodes  (Protected)
+// Creates a node for a story owned by the authenticated user.
 exports.createNode = async (req, res) => {
   try {
     const storyId = Number(req.params.storyId);
@@ -44,7 +44,7 @@ exports.createNode = async (req, res) => {
     const story = await prisma.story.findUnique({ where: { id: storyId } });
     if (!story) return res.status(404).json({ message: "Story not found" });
 
-    // owner check
+    // Enforce story ownership before allowing edits.
     if (story.userId !== req.userId) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -61,7 +61,7 @@ exports.createNode = async (req, res) => {
       },
     });
 
-    // set start node automatically if not set
+    // First node becomes start node automatically unless one already exists.
     if (!story.startNodeId) {
       await prisma.story.update({
         where: { id: storyId },
@@ -76,7 +76,7 @@ exports.createNode = async (req, res) => {
   }
 };
 
-// PUT /api/nodes/:id (Protected)
+// Updates a node's content/options for the story owner.
 exports.updateNode = async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -88,7 +88,7 @@ exports.updateNode = async (req, res) => {
     const story = await prisma.story.findUnique({ where: { id: node.storyId } });
     if (!story) return res.status(404).json({ message: "Story not found" });
 
-    // owner check
+    // Enforce story ownership before allowing edits.
     if (story.userId !== req.userId) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -108,7 +108,7 @@ exports.updateNode = async (req, res) => {
   }
 };
 
-// DELETE /api/nodes/:id (Protected)
+// Deletes a node for the story owner.
 exports.deleteNode = async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -119,7 +119,7 @@ exports.deleteNode = async (req, res) => {
     const story = await prisma.story.findUnique({ where: { id: node.storyId } });
     if (!story) return res.status(404).json({ message: "Story not found" });
 
-    // owner check
+    // Enforce story ownership before allowing edits.
     if (story.userId !== req.userId) {
       return res.status(403).json({ message: "Not allowed" });
     }
