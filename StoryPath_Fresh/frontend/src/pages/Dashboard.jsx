@@ -39,7 +39,6 @@ export default function Dashboard() {
   const [error, setError] = useState("");            // Error message
   const [deletingStoryId, setDeletingStoryId] = useState(null); // Delete in progress
   const [duplicatingStoryId, setDuplicatingStoryId] = useState(null); // Duplicate in progress
-  const [exportingStoryId, setExportingStoryId] = useState(null); // Export in progress
   const [publishingStoryId, setPublishingStoryId] = useState(null); // Publish toggle in progress
 
   /**
@@ -153,43 +152,6 @@ export default function Dashboard() {
       setError(getApiError(err, "Duplicate story failed"));
     } finally {
       setDuplicatingStoryId(null);
-    }
-  };
-
-  const exportStory = async (storyId) => {
-    setMsg("");
-    setError("");
-    setExportingStoryId(storyId);
-
-    try {
-      const [storyRes, nodesRes] = await Promise.all([
-        api.get(`/stories/${storyId}`),
-        api.get(`/stories/${storyId}/nodes`),
-      ]);
-
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        story: storyRes.data,
-        nodes: nodesRes.data,
-      };
-
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = `story-${storyId}.json`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      URL.revokeObjectURL(url);
-
-      setMsg(`Story #${storyId} exported`);
-    } catch (err) {
-      setError(getApiError(err, "Export story failed"));
-    } finally {
-      setExportingStoryId(null);
     }
   };
 
@@ -360,14 +322,6 @@ export default function Dashboard() {
                       onClick={() => duplicateStory(s.id, s.title)}
                     >
                       {duplicatingStoryId === s.id ? "Duplicating..." : "Duplicate"}
-                    </button>
-                    <button
-                      className="btn btnGhost"
-                      type="button"
-                      disabled={exportingStoryId === s.id}
-                      onClick={() => exportStory(s.id)}
-                    >
-                      {exportingStoryId === s.id ? "Exporting..." : "Export JSON"}
                     </button>
                     <button
                       className="btn btnGhost"
