@@ -4,9 +4,9 @@
 
 :root{
   --bg:#05060b;
-  --panel: rgba(7,8,11,0.9);
-  --panel2: rgba(9,10,13,0.94);
-  --panel3: rgba(4,5,7,0.96);
+  --panel: rgba(26,28,36,0.84);
+  --panel2: rgba(22,24,32,0.86);
+  --panel3: rgba(18,20,28,0.9);
   --border: rgba(255,232,31,0.26);
 
   --text: rgba(255,250,224,1);
@@ -72,16 +72,16 @@ label,
 .statLabel,
 .kicker,
 .brandSub{
-  color: rgba(248,238,200,.98);
-  text-shadow: 0 1px 6px rgba(0,0,0,.72);
+  color: rgba(252,243,210,.99);
+  text-shadow: 0 1px 4px rgba(0,0,0,.78);
 }
 
 body{
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(1200px 520px at 50% 100%, rgba(255,214,92,.14), transparent 68%),
-    linear-gradient(180deg, rgba(0,0,0,.98), rgba(0,0,0,1));
+    radial-gradient(1200px 520px at 50% 100%, rgba(255,214,92,.3), transparent 68%),
+    linear-gradient(180deg, rgba(17,19,27,.9), rgba(13,15,22,.95));
   background-size: cover, cover;
   background-position: center, center;
   background-repeat: no-repeat;
@@ -113,7 +113,7 @@ body::before{
     radial-gradient(1px 1px at 78% 86%, rgba(255,255,255,.58), transparent 70%),
     radial-gradient(1px 1px at 88% 76%, rgba(255,255,255,.64), transparent 70%);
   background-size: 320px 320px, 360px 360px, 420px 420px, 480px 480px, 520px 520px, 560px 560px, 620px 620px, 680px 680px, 740px 740px, 780px 780px, 260px 260px, 300px 300px, 340px 340px, 380px 380px, 420px 420px, 460px 460px, 500px 500px;
-  opacity:.56;
+  opacity:.3;
   z-index:0;
   animation: twinkle 6s ease-in-out infinite alternate;
 }
@@ -126,8 +126,8 @@ body::after{
   background:
     radial-gradient(closest-side at 52% 104%, rgba(255,224,128,.18), transparent 72%),
     linear-gradient(180deg, transparent 54%, rgba(0,0,0,.24) 100%);
-  filter: blur(22px);
-  opacity: .42;
+  filter: blur(14px);
+  opacity: .2;
   animation: sweep 11s ease-in-out infinite;
   z-index:0;
 }
@@ -138,9 +138,9 @@ body::after{
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: .08;
+  opacity: .05;
   background:
-    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.24) 68%, rgba(0,0,0,.44) 100%);
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.14) 68%, rgba(0,0,0,.24) 100%);
 }
 
 .appRoot::after{
@@ -152,9 +152,9 @@ body::after{
   background:
     radial-gradient(circle at 84% 16%, rgba(255,214,92,.18) 0 30px, transparent 48px),
     radial-gradient(circle at 90% 20%, rgba(255,232,166,.16) 0 16px, transparent 30px),
-    radial-gradient(900px 360px at 50% 62%, rgba(255,191,47,.08), transparent 72%),
-    radial-gradient(circle at 50% 30%, transparent 0%, rgba(0,0,0,0.26) 58%, rgba(0,0,0,0.62) 100%),
-    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.25) 36%, rgba(0,0,0,.58) 100%);
+    radial-gradient(900px 360px at 50% 62%, rgba(255,191,47,.2), transparent 72%),
+    radial-gradient(circle at 50% 30%, transparent 0%, rgba(0,0,0,0.1) 58%, rgba(0,0,0,0.2) 100%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.09) 36%, rgba(0,0,0,.18) 100%);
   animation: posterBreath 14s ease-in-out infinite;
 }
 
@@ -172,7 +172,7 @@ body::after{
   body::after{
     animation: none;
     filter: blur(18px);
-    opacity:.42;
+    opacity:.26;
   }
 
   .appRoot::before{
@@ -235,7 +235,7 @@ a{
   z-index: 50;
   width: 100%;
   backdrop-filter: blur(16px);
-  background: linear-gradient(180deg, rgba(0,0,0,0.97), rgba(2,2,3,0.92));
+  background: linear-gradient(180deg, rgba(24,26,35,0.86), rgba(20,22,30,0.8));
   border-bottom: 1px solid rgba(255,232,31,0.36);
 }
 
@@ -327,9 +327,9 @@ a{
   border-radius: 12px;
   border: 1px solid transparent;
   color: rgba(255,248,216,1);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
-  text-shadow: 0 1px 5px rgba(0,0,0,.72);
+  text-shadow: 0 1px 4px rgba(0,0,0,.78);
   transition: .2s ease;
 }
 
@@ -457,7 +457,7 @@ a{
     radial-gradient(960px 300px at 80% 100%, rgba(255,191,47,.15), transparent 60%),
     linear-gradient(130deg, transparent 32%, rgba(255,232,31,.08) 52%, transparent 66%);
   pointer-events:none;
-  opacity:.72;
+  opacity:.48;
 }
 
 .panel > *{
@@ -524,6 +524,7 @@ a{
 
 .smallText{
   font-size: 12px;
+  font-weight: 600;
 }
 
 .divider{
@@ -628,7 +629,7 @@ textarea{
 }
 
 .subPanel{
-  background: linear-gradient(180deg, rgba(7,8,11,.9), rgba(5,6,8,.94));
+  background: linear-gradient(180deg, rgba(28,30,40,.82), rgba(22,24,33,.86));
   border: 1px solid rgba(255,232,31,0.2);
   border-radius: var(--radius);
   padding: 16px;
@@ -646,7 +647,7 @@ textarea{
 
 .storyCard{
   width: 100%;
-  background: linear-gradient(180deg, rgba(8,9,11,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(29,31,41,.82), rgba(22,24,33,.88));
   border: 1px solid rgba(255,232,31,0.14);
   border-radius: var(--radius);
   padding: 14px;
@@ -692,6 +693,7 @@ textarea{
 .storyMeta{
   color: var(--muted);
   font-size: 12px;
+  font-weight: 600;
   margin-top: 4px;
 }
 
@@ -710,7 +712,7 @@ textarea{
 
 .nodeCard{
   width: 100%;
-  background: linear-gradient(180deg, rgba(7,9,12,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(28,31,41,.82), rgba(22,24,33,.88));
   border: 1px solid rgba(255,232,31,0.2);
   border-radius: var(--radius);
   padding: 12px;
@@ -736,7 +738,7 @@ textarea{
   border-radius: 22px;
   padding: 18px;
   border: 1px solid rgba(255,232,31,0.26);
-  background: linear-gradient(180deg, rgba(8,10,13,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(29,32,42,.82), rgba(22,24,33,.88));
   position: relative;
   overflow:hidden;
 }
@@ -791,8 +793,8 @@ textarea{
   overflow: hidden;
   border: 1px solid rgba(255,232,31,0.2);
   background:
-    radial-gradient(1200px 500px at 50% 110%, rgba(255,232,31,.15), transparent 62%),
-    linear-gradient(180deg, rgba(0,0,0,.94), rgba(3,3,4,.97));
+    radial-gradient(1200px 500px at 50% 110%, rgba(255,232,31,.3), transparent 62%),
+    linear-gradient(180deg, rgba(20,22,31,.84), rgba(15,17,25,.9));
   box-shadow: 0 18px 60px rgba(0,0,0,.68);
 }
 
@@ -936,7 +938,7 @@ textarea{
   padding: 20px;
   border-radius: 22px;
   border: 1px solid rgba(255,232,31,0.16);
-  background: linear-gradient(180deg, rgba(8,9,12,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(29,31,41,.82), rgba(22,24,33,.88));
   box-shadow: var(--shadow);
   overflow:hidden;
   position: relative;
@@ -1025,7 +1027,7 @@ textarea{
   border-radius: 18px;
   padding: 12px;
   border: 1px solid rgba(255,232,31,0.22);
-  background: rgba(0,0,0,0.22);
+  background: rgba(34,36,48,0.58);
   min-width: 0;
 }
 
@@ -1059,7 +1061,7 @@ textarea{
   height: 100%;
   border-radius: 22px;
   border: 1px solid rgba(255,232,31,0.26);
-  background: linear-gradient(180deg, rgba(8,10,13,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(29,32,42,.82), rgba(22,24,33,.88));
   box-shadow: var(--shadow);
   overflow:hidden;
 }
@@ -1129,6 +1131,7 @@ textarea{
 .holoHint{
   color: rgba(248,238,198,.96);
   font-size: 12px;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -1150,7 +1153,7 @@ textarea{
   padding: 18px;
   border-radius: 18px;
   border: 1px dashed rgba(255,232,31,0.22);
-  background: linear-gradient(180deg, rgba(8,10,16,.74), rgba(7,9,14,.82));
+  background: linear-gradient(180deg, rgba(31,34,45,.74), rgba(24,27,36,.84));
 }
 
 .emptyTitle{
@@ -1162,6 +1165,7 @@ textarea{
   margin-top: 12px;
   color: rgba(244,233,193,.94);
   font-size: 12px;
+  font-weight: 600;
 }
 
 /* Animations */
@@ -1211,7 +1215,7 @@ textarea{
   padding: 10px 14px;
   border-radius: 12px;
   border: 1px solid rgba(255,232,31,0.18);
-  background: linear-gradient(180deg, rgba(7,8,11,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(28,30,40,.82), rgba(22,24,33,.88));
   color: rgba(255,250,226,1);
   font-weight: 600;
   font-size: 14px;
@@ -1232,6 +1236,7 @@ textarea{
 .charCount{
   font-size: 11px;
   color: rgba(245,233,192,.96);
+  font-weight: 600;
   margin-top: 4px;
   text-align: right;
 }
@@ -1266,7 +1271,7 @@ textarea{
   border-radius: 16px;
   padding: 14px;
   border: 1px solid rgba(255,232,31,0.16);
-  background: rgba(0,0,0,0.22);
+  background: rgba(34,36,48,0.56);
   text-align: center;
 }
 
@@ -1312,7 +1317,7 @@ textarea{
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(255,232,31,0.18);
-  background: linear-gradient(180deg, rgba(7,8,11,.9), rgba(4,5,7,.95));
+  background: linear-gradient(180deg, rgba(28,30,40,.82), rgba(22,24,33,.88));
   color: rgba(255,250,226,1);
   font-weight: 600;
   font-size: 14px;
@@ -1334,7 +1339,7 @@ textarea{
   border: 1px solid rgba(255,232,31,0.24);
   border-radius: 16px;
   background:
-    linear-gradient(180deg, rgba(7,9,12,.9), rgba(4,5,7,.95)),
+    linear-gradient(180deg, rgba(28,31,41,.82), rgba(22,24,33,.88)),
     repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,232,31,.07) 47px 48px, transparent 49px 92px);
   overflow: hidden;
 }
