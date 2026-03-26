@@ -128,7 +128,7 @@ export default function Stories() {
     try {
       const res = await api.post(`/stories/${storyId}/fork`);
       setError("");
-      alert(`Story "${storyTitle}" forked successfully! Check your dashboard.`);
+      alert(`Campaign "${storyTitle}" cloned successfully. Check your mission bay.`);
       load(searchQuery);
     } catch (e) {
       setError(e?.response?.data?.message || "Fork story failed");
@@ -153,9 +153,9 @@ export default function Stories() {
       <div className="panel animIn">
         <div className="panelHeader">
           <div>
-            <div className="kicker">PUBLIC ARCHIVE</div>
-            <h1 className="panelBigTitle">Stories</h1>
-            <p className="panelText">Browse and play interactive stories.</p>
+            <div className="kicker">STAR ARCHIVE</div>
+            <h1 className="panelBigTitle">Galactic Campaigns</h1>
+            <p className="panelText">Browse and play interactive saga missions.</p>
           </div>
           <button className="btn btnGhost" onClick={() => load(searchQuery)}>Refresh</button>
         </div>
@@ -167,14 +167,14 @@ export default function Stories() {
           </div>
           <div className="chip small">
             <span className="chipDot" />
-            {`Your stories: ${ownedCount}`}
+            {`Your campaigns: ${ownedCount}`}
           </div>
         </div>
 
         <div className="searchRow">
           <input
             type="text"
-            placeholder="Search stories by title..."
+            placeholder="Search campaigns by codename..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="searchInput"
@@ -194,9 +194,9 @@ export default function Stories() {
             value={visibilityFilter}
             onChange={(e) => setVisibilityFilter(e.target.value)}
           >
-            <option value="all">All Stories</option>
-            <option value="community">Community</option>
-            <option value="mine">My Stories</option>
+            <option value="all">All Campaigns</option>
+            <option value="community">Fleet Network</option>
+            <option value="mine">My Campaigns</option>
           </select>
           <button
             type="button"
@@ -212,8 +212,8 @@ export default function Stories() {
 
         {!loading && visibleStories.length === 0 ? (
           <div className="empty">
-            <div className="emptyTitle">No stories found.</div>
-            <div className="muted">{searchQuery ? "Try a different search." : "Create one from Dashboard after login."}</div>
+            <div className="emptyTitle">No campaigns detected.</div>
+            <div className="muted">{searchQuery ? "Try a different signal query." : "Create one from Mission Bay after login."}</div>
           </div>
         ) : null}
 
@@ -223,7 +223,7 @@ export default function Stories() {
               {Number(user?.id) === Number(s?.userId) ? (
                 <div className="chip small">
                   <span className="chipDot" />
-                  your story
+                  your campaign
                 </div>
               ) : null}
 
@@ -236,7 +236,7 @@ export default function Stories() {
                 </div>
                 <div className="chip small">
                   <span className="chipDot" />
-                  {s.isPublished ? "published" : "draft"}
+                  {s.isPublished ? "broadcast" : "draft"}
                 </div>
               </div>
               <div className="storyDesc">{s.description}</div>
@@ -244,13 +244,13 @@ export default function Stories() {
                 {`Plays ${s.playCount || 0} | Completions ${s.completionCount || 0}`}
               </div>
               <div className="storyActions">
-                <Link className="btn btnPrimary" to={`/stories/${s.id}/play`}>Play</Link>
+                <Link className="btn btnPrimary" to={`/stories/${s.id}/play`}>Deploy</Link>
                 <button
                   type="button"
                   className="btn btnGhost"
                   onClick={() => copyPlayLink(s.id)}
                 >
-                  {copiedStoryId === s.id ? "Copied" : "Share"}
+                  {copiedStoryId === s.id ? "Signal Copied" : "Transmit"}
                 </button>
                 {Number(user?.id) !== Number(s?.userId) ? (
                   <button
@@ -259,19 +259,19 @@ export default function Stories() {
                     disabled={forkingStoryId === s.id}
                     onClick={() => forkStory(s.id, s.title)}
                   >
-                    {forkingStoryId === s.id ? "Forking..." : "Fork/Remix"}
+                    {forkingStoryId === s.id ? "Cloning..." : "Clone/Remix"}
                   </button>
                 ) : null}
                 {Number(user?.id) === Number(s?.userId) ? (
                   <>
-                    <Link className="btn btnGhost" to={`/stories/${s.id}/edit`}>Edit Nodes</Link>
+                    <Link className="btn btnGhost" to={`/stories/${s.id}/edit`}>Edit Mission Nodes</Link>
                     <button
                       type="button"
                       className="btn btnGhost"
                       disabled={deletingStoryId === s.id}
                       onClick={() => deleteStory(s.id, s.title)}
                     >
-                      {deletingStoryId === s.id ? "Deleting..." : "Delete"}
+                      {deletingStoryId === s.id ? "Purging..." : "Delete"}
                     </button>
                   </>
                 ) : null}

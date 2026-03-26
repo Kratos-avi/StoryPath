@@ -37,9 +37,9 @@ export default function Register() {
         <div className="panel wide animIn">
           <div className="panelHeader">
             <div>
-              <div className="kicker">NEW OPERATIVE</div>
-              <h1 className="panelBigTitle">Register</h1>
-              <p className="panelText">Create your account to build stories & nodes.</p>
+              <div className="kicker">NEW CREW RECRUIT</div>
+              <h1 className="panelBigTitle">Join The Fleet</h1>
+              <p className="panelText">Create your account to build campaigns and mission nodes.</p>
             </div>
             <div className="badge">INIT</div>
           </div>
@@ -69,9 +69,9 @@ export default function Register() {
 
             <div className="rowBtns">
               <button className="btn btnPrimary" disabled={loading}>
-                {loading ? "Creating..." : "Create Account"}
+                {loading ? "Creating Identity..." : "Create Fleet ID"}
               </button>
-              <Link className="btn btnGhost" to="/login">Already have account</Link>
+              <Link className="btn btnGhost" to="/login">Already in the fleet</Link>
             </div>
           </form>
         </div>

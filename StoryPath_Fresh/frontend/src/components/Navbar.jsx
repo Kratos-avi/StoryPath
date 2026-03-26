@@ -36,22 +36,22 @@ export default function Navbar() {
         <Link to="/" className="brand">
           <span className="brandMark" />
           <div className="brandText">
-            <div className="brandTitle">STORYPATH</div>
-            <div className="brandSub">Interactive Story Builder</div>
+            <div className="brandTitle">STORYPATH COMMAND</div>
+            <div className="brandSub">Galactic Saga Builder</div>
           </div>
         </Link>
 
         {/* Navigation links section */}
         <nav className="navRight">
           {/* Public navigation links - visible to all users */}
-          <Link className={isActive("/")} to="/">Home</Link>
-          <Link className={isActive("/stories")} to="/stories">Stories</Link>
+          <Link className={isActive("/")} to="/">Command Deck</Link>
+          <Link className={isActive("/stories")} to="/stories">Star Archive</Link>
 
           {/* Conditional navigation based on authentication state */}
           {user ? (
             <>
               {/* Dashboard link for authenticated creators */}
-              <Link className={isActive("/dashboard")} to="/dashboard">Dashboard</Link>
+              <Link className={isActive("/dashboard")} to="/dashboard">Mission Bay</Link>
               
               {/* User profile chip displaying current user's name */}
               <div className="chip">
@@ -60,13 +60,13 @@ export default function Navbar() {
               </div>
               
               {/* Logout button for authenticated users */}
-              <button className="btn btnGhost" onClick={logout}>Logout</button>
+              <button className="btn btnGhost" onClick={logout}>Exit Console</button>
             </>
           ) : (
             <>
               {/* Login and Register links for unauthenticated users */}
-              <Link className={isActive("/login")} to="/login">Login</Link>
-              <Link className="btn btnPrimary" to="/register">Register</Link>
+              <Link className={isActive("/login")} to="/login">Enter</Link>
+              <Link className="btn btnPrimary" to="/register">Join Fleet</Link>
             </>
           )}
         </nav>

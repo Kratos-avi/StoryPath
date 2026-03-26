@@ -53,7 +53,7 @@ export default function UserProfile() {
     return (
       <div className="container">
         <div className="panel animIn">
-          <div className="alert ok">Loading profile…</div>
+          <div className="alert ok">Loading commander profile…</div>
         </div>
       </div>
     );
@@ -64,7 +64,7 @@ export default function UserProfile() {
       <div className="container">
         <div className="panel animIn">
           <div className="alert error">{error || "Profile not found"}</div>
-          <Link className="btn btnPrimary" to="/stories">Back to Stories</Link>
+            <Link className="btn btnPrimary" to="/stories">Back to Star Archive</Link>
         </div>
       </div>
     );
@@ -75,16 +75,16 @@ export default function UserProfile() {
       <div className="panel animIn">
         <div className="panelHeader">
           <div>
-            <div className="kicker">USER PROFILE</div>
+            <div className="kicker">COMMANDER PROFILE</div>
             <h1 className="panelBigTitle">{profile.name}</h1>
             <p className="panelText">{profile.email}</p>
           </div>
-          <Link className="btn btnGhost" to="/stories">Back to Stories</Link>
+          <Link className="btn btnGhost" to="/stories">Back to Star Archive</Link>
         </div>
 
         <div className="profileStats">
           <div className="stat">
-            <div className="statLabel">Stories Created</div>
+            <div className="statLabel">Campaigns Created</div>
             <div className="statValue">{profile._count.stories}</div>
           </div>
           <div className="stat">
@@ -97,12 +97,12 @@ export default function UserProfile() {
 
         {stories.length === 0 ? (
           <div className="empty">
-            <div className="emptyTitle">No stories yet.</div>
-            <div className="muted">This user hasn't created any stories.</div>
+            <div className="emptyTitle">No campaigns yet.</div>
+            <div className="muted">This commander has not published operations yet.</div>
           </div>
         ) : (
           <>
-            <h2 className="subTitle">Stories by {profile.name}</h2>
+            <h2 className="subTitle">Campaigns by {profile.name}</h2>
             <div className="cards">
               {stories.map((s, idx) => (
                 <div
@@ -118,7 +118,7 @@ export default function UserProfile() {
                     </div>
                     <div className="chip small">
                       <span className="chipDot" />
-                      playable
+                      deployable
                     </div>
                   </div>
                   <div className="storyDesc">{s.description}</div>

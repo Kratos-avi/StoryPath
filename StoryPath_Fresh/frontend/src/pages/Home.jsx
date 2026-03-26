@@ -42,35 +42,52 @@ export default function Home() {
 
   return (
     <div className="container">
+      <section className="crawlScene animIn">
+        <div className="crawlStars" aria-hidden="true" />
+        <div className="crawlTitleWrap">
+          <div className="crawlOverline">A long time ago in a distant digital galaxy...</div>
+          <div className="crawlLogo">STORYPATH</div>
+          <div className="crawlSubLogo">INTERACTIVE SAGA COMMAND</div>
+        </div>
+        <div className="crawlPerspective" aria-hidden="true">
+          <div className="crawlText">
+            Citizens of the fleet, your mission begins now. Build branching campaigns,
+            command story nodes, and send players across dangerous sectors where every
+            decision changes fate. The archive is open. The command deck is online.
+            Choose your path between order and chaos.
+          </div>
+        </div>
+      </section>
+
       {/* HERO */}
       <section className="hero animIn">
         <div className="heroLeft">
-          <div className="kicker">JEDI-STYLE STORY EXPERIENCE</div>
+          <div className="kicker">GALACTIC SAGA EXPERIENCE</div>
 
           <h1 className="heroTitle">
-            Build branching stories.
-            <span className="accent"> Play them like a game.</span>
+            Command living storylines.
+            <span className="accent"> Navigate destiny among the stars.</span>
           </h1>
 
           <p className="heroText">
             StoryPath is an interactive storytelling platform where creators
             design branching adventures and players explore different outcomes.
             Build story nodes, connect meaningful choices, and turn reading into
-            a cinematic experience inspired by modern action-adventure games.
+            a cinematic mission log inside a vast galactic frontier.
           </p>
 
           <div className="heroActions">
             <Link className="btn btnPrimary" to="/stories">
-              Explore Stories
+              Enter Star Archive
             </Link>
 
             {user ? (
               <Link className="btn btnGhost" to="/dashboard">
-                Go to Dashboard
+                Open Mission Bay
               </Link>
             ) : (
               <Link className="btn btnGhost" to="/login">
-                Login to Create
+                Enter to Create
               </Link>
             )}
           </div>
@@ -78,25 +95,25 @@ export default function Home() {
           <div className="heroStats">
             <div className="statCard">
               <div className="statTop">Flow</div>
-              <div className="statValue">Story Nodes</div>
+              <div className="statValue">Mission Nodes</div>
               <div className="statSub">
-                Build connected scenes and narrative paths
+                Build connected sectors and branching routes
               </div>
             </div>
 
             <div className="statCard">
               <div className="statTop">Choice</div>
-              <div className="statValue">Multiple Routes</div>
+              <div className="statValue">Starlane Routes</div>
               <div className="statSub">
-                Create different outcomes and endings
+                Trigger alternate outcomes and final transmissions
               </div>
             </div>
 
             <div className="statCard">
               <div className="statTop">Play</div>
-              <div className="statValue">Cinematic Mode</div>
+              <div className="statValue">Bridge Simulation</div>
               <div className="statSub">
-                Read and explore stories like interactive missions
+                Experience stories like tactical deep-space operations
               </div>
             </div>
           </div>
@@ -105,36 +122,36 @@ export default function Home() {
         <div className="heroRight">
           <div className="holoPanel">
             <div className="holoHeader">
-              <div className="holoTitle">Mission Panel</div>
-              <div className="holoBadge">LIVE</div>
+              <div className="holoTitle">Bridge Console</div>
+              <div className="holoBadge">ONLINE</div>
             </div>
 
             <div className="holoBody">
               <div className="holoLine">
                 <span className="dot dotBlue" />
-                <span>Register or login to unlock creator access</span>
+                <span>Join the fleet to unlock command permissions</span>
               </div>
 
               <div className="holoLine">
                 <span className="dot dotCyan" />
-                <span>Create and manage your own stories</span>
+                <span>Draft and manage your own saga campaigns</span>
               </div>
 
               <div className="holoLine">
                 <span className="dot dotAmber" />
-                <span>Add nodes, connect choices, and shape paths</span>
+                <span>Link mission nodes, choices, and branching starlanes</span>
               </div>
 
               <div className="holoLine">
                 <span className="dot dotRed" />
-                <span>Play every story from the starting node</span>
+                <span>Deploy every campaign from its launch node</span>
               </div>
 
               <div className="divider" />
 
               <div className="holoHint">
                 Tip: Keep story nodes short, clear, and immersive. The best
-                choices feel like the player’s next move in a mission.
+                choices should feel like a commander's next decisive maneuver.
               </div>
             </div>
           </div>
@@ -147,15 +164,15 @@ export default function Home() {
           <div className="panelHeader">
             <div>
               <div className="kicker">Public Access</div>
-              <h2 className="panelTitle">Public Stories</h2>
+              <h2 className="panelTitle">Public Star Archive</h2>
               <p className="panelText">
-                Anyone can browse and play published stories from the story list.
+                Any traveler can scan and play published campaigns.
               </p>
             </div>
           </div>
 
           <Link className="btn btnGhost" to="/stories">
-            Open Public List
+            Open Archive
           </Link>
         </div>
 
@@ -163,16 +180,16 @@ export default function Home() {
           <div className="panelHeader">
             <div>
               <div className="kicker">Creator Access</div>
-              <h2 className="panelTitle">Creator Dashboard</h2>
+              <h2 className="panelTitle">Commander Mission Bay</h2>
               <p className="panelText">
-                Logged-in users can create stories, manage nodes, and build
-                branching adventures.
+                Authorized commanders can create campaigns, manage nodes, and
+                shape branching operations.
               </p>
             </div>
           </div>
 
           <Link className="btn btnPrimary" to={user ? "/dashboard" : "/login"}>
-            {user ? "Open Dashboard" : "Login First"}
+            {user ? "Open Mission Bay" : "Enter Console"}
           </Link>
         </div>
       </section>
@@ -182,9 +199,9 @@ export default function Home() {
         <div className="panelHeader">
           <div>
             <div className="kicker">Featured Content</div>
-            <h2 className="panelBigTitle">Explore story missions</h2>
+            <h2 className="panelBigTitle">Explore galactic campaigns</h2>
             <p className="panelText">
-              Discover immersive public stories designed to show the full
+              Discover immersive public campaigns designed to show the full
               StoryPath experience.
             </p>
           </div>
@@ -210,13 +227,13 @@ export default function Home() {
 
               <div className="storyActions">
                 <Link className="btn btnGhost" to="/stories">
-                  View Public Stories
+                  View Star Archive
                 </Link>
                 <Link
                   className="btn btnPrimary"
                   to={user ? "/dashboard" : "/login"}
                 >
-                  {user ? "Start Creating" : "Login to Create"}
+                  {user ? "Launch New Campaign" : "Enter to Create"}
                 </Link>
               </div>
             </div>
@@ -230,26 +247,26 @@ export default function Home() {
           <div className="panelHeader">
             <div>
               <div className="kicker">How It Works</div>
-              <h2 className="panelTitle">For players</h2>
+              <h2 className="panelTitle">For explorers</h2>
             </div>
           </div>
 
           <div className="subPanel">
             <div className="holoLine">
               <span className="dot dotBlue" />
-              <span>Browse public stories from the collection</span>
+              <span>Browse campaigns from the public archive</span>
             </div>
             <div className="holoLine">
               <span className="dot dotCyan" />
-              <span>Read scenes and choose your next move</span>
+              <span>Read each transmission and choose your next maneuver</span>
             </div>
             <div className="holoLine">
               <span className="dot dotAmber" />
-              <span>Unlock different routes and endings</span>
+              <span>Unlock alternate routes and endgame outcomes</span>
             </div>
             <div className="holoLine">
               <span className="dot dotRed" />
-              <span>Replay adventures to discover new outcomes</span>
+              <span>Replay operations to discover hidden paths</span>
             </div>
           </div>
         </div>
@@ -258,26 +275,26 @@ export default function Home() {
           <div className="panelHeader">
             <div>
               <div className="kicker">Creator System</div>
-              <h2 className="panelTitle">For creators</h2>
+              <h2 className="panelTitle">For commanders</h2>
             </div>
           </div>
 
           <div className="subPanel">
             <div className="holoLine">
               <span className="dot dotBlue" />
-              <span>Create a story with title and description</span>
+              <span>Create a campaign with codename and briefing</span>
             </div>
             <div className="holoLine">
               <span className="dot dotCyan" />
-              <span>Add nodes and connect choices between scenes</span>
+              <span>Add nodes and connect choices between sectors</span>
             </div>
             <div className="holoLine">
               <span className="dot dotAmber" />
-              <span>Manage story flow from your dashboard</span>
+              <span>Manage mission flow from your command deck</span>
             </div>
             <div className="holoLine">
               <span className="dot dotRed" />
-              <span>Publish adventures for others to explore</span>
+              <span>Publish campaigns for the fleet to explore</span>
             </div>
           </div>
         </div>
@@ -291,8 +308,8 @@ export default function Home() {
             <h2 className="panelBigTitle">Why StoryPath stands out</h2>
             <p className="panelText">
               StoryPath combines interactive writing, branching structure, and a
-              cinematic user interface to make storytelling more engaging for
-              both creators and readers.
+              cinematic command interface to make interactive campaigns more
+              engaging for both commanders and explorers.
             </p>
           </div>
         </div>
@@ -307,8 +324,8 @@ export default function Home() {
               </span>
             </div>
             <div className="nodeText">
-              Stories are built with multiple branches so each player can follow
-              a different path through the same narrative universe.
+              Campaigns are built with multiple branches so each explorer can
+              travel a different route through the same galactic timeline.
             </div>
           </div>
 
@@ -321,8 +338,8 @@ export default function Home() {
               </span>
             </div>
             <div className="nodeText">
-              Writers can organize scenes, manage connections, and expand their
-              stories one choice at a time.
+              Commanders can organize sectors, tune mission links, and expand
+              campaigns one decision at a time.
             </div>
           </div>
 
@@ -335,8 +352,8 @@ export default function Home() {
               </span>
             </div>
             <div className="nodeText">
-              Public stories make it easy for readers to discover adventures and
-              for creators to share their work with the community.
+              Public campaigns make it easy for travelers to discover missions
+              and for commanders to share their saga with the fleet.
             </div>
           </div>
 
@@ -349,7 +366,7 @@ export default function Home() {
               </span>
             </div>
             <div className="nodeText">
-              A premium game-inspired presentation gives StoryPath a stronger
+              A premium bridge-style presentation gives StoryPath a stronger
               atmosphere than a standard story listing application.
             </div>
           </div>
@@ -363,23 +380,23 @@ export default function Home() {
         <div className="kicker">Begin Your Journey</div>
 
         <div className="playText">
-          Enter the StoryPath universe and start building interactive worlds,
-          publishing public adventures, and exploring stories where every
-          decision matters.
+          Enter the StoryPath galaxy and start building living campaigns,
+          publishing public operations, and exploring worlds where every
+          decision redirects the stars.
         </div>
 
         <div className="choiceList">
           <Link className="btn btnPrimary choiceBtn" to={user ? "/dashboard" : "/login"}>
-            {user ? "Launch Dashboard" : "Login to Begin"}
+            {user ? "Launch Mission Bay" : "Enter to Begin"}
           </Link>
 
           <Link className="btn btnGhost choiceBtn" to="/stories">
-            Browse Public Stories
+            Browse Star Archive
           </Link>
         </div>
 
         <div className="footNote">
-          Create. Explore. Choose your path.
+          Command. Explore. Choose your route.
         </div>
       </section>
     </div>

@@ -144,14 +144,14 @@ export default function PlayStory() {
       <div className="panel animIn">
         <div className="panelHeader">
           <div>
-            <div className="kicker">PLAY MODE</div>
+            <div className="kicker">SIMULATION MODE</div>
             <h1 className="panelBigTitle">{story?.title || "Story"}</h1>
             <p className="panelText">{story?.description}</p>
             <div className="kicker" style={{ marginTop: "6px" }}>
               {`Plays ${story?.playCount || 0} | Completions ${story?.completionCount || 0}`}
             </div>
           </div>
-          <button type="button" className="btn btnGhost" onClick={load}>Restart</button>
+          <button type="button" className="btn btnGhost" onClick={load}>Reboot Mission</button>
         </div>
 
         {error ? <div className="alert error">{error}</div> : null}
@@ -179,8 +179,8 @@ export default function PlayStory() {
               </div>
             ) : (
               <div className="empty">
-                <div className="emptyTitle">Story End</div>
-                <div className="muted">No further choices from this node.</div>
+                <div className="emptyTitle">Transmission Complete</div>
+                <div className="muted">No further routes from this mission node.</div>
               </div>
             )}
 
@@ -191,10 +191,10 @@ export default function PlayStory() {
                 onClick={goBack}
                 disabled={!canGoBack || loadingNext}
               >
-                Back
+                Step Back
               </button>
               <button type="button" className="btn btnPrimary" onClick={load} disabled={loadingNext}>
-                Restart Story
+                Restart Simulation
               </button>
             </div>
           </div>

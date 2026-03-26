@@ -36,9 +36,9 @@ export default function Login() {
         <div className="panel wide animIn">
           <div className="panelHeader">
             <div>
-              <div className="kicker">ACCESS TERMINAL</div>
-              <h1 className="panelBigTitle">Login</h1>
-              <p className="panelText">Enter credentials to access creator features.</p>
+              <div className="kicker">STARPORT ACCESS</div>
+              <h1 className="panelBigTitle">Enter Command Console</h1>
+              <p className="panelText">Verify credentials to unlock commander features.</p>
             </div>
             <div className="badge">SECURE</div>
           </div>
@@ -63,9 +63,9 @@ export default function Login() {
 
             <div className="rowBtns">
               <button className="btn btnPrimary" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
+                {loading ? "Authenticating..." : "Enter"}
               </button>
-              <Link className="btn btnGhost" to="/register">Create account</Link>
+              <Link className="btn btnGhost" to="/register">Join Fleet</Link>
             </div>
           </form>
 

@@ -198,10 +198,10 @@ export default function Dashboard() {
       <div className="panel animIn">
         <div className="panelHeader">
           <div>
-            <div className="kicker">CREATOR CONSOLE</div>
-            <h1 className="panelBigTitle">Dashboard</h1>
+            <div className="kicker">COMMANDER CONSOLE</div>
+            <h1 className="panelBigTitle">Mission Bay</h1>
             <p className="panelText">
-              Logged in as <span className="strong">{user?.name}</span> — create stories and edit nodes.
+              Logged in as <span className="strong">{user?.name}</span> — create campaigns and control mission nodes.
             </p>
           </div>
           <button className="btn btnGhost" onClick={loadMine}>Reload</button>
@@ -243,7 +243,7 @@ export default function Dashboard() {
 
         <div className="grid2">
           <div className="subPanel">
-            <h2 className="subTitle">Create Story (Protected)</h2>
+            <h2 className="subTitle">Create Campaign (Protected)</h2>
             <form className="form" onSubmit={createStory}>
               <div className="field">
                 <label>Title</label>
@@ -264,19 +264,19 @@ export default function Dashboard() {
                 />
                 <div className="charCount">{description.length}/{MAX_DESCRIPTION_LENGTH}</div>
               </div>
-              <button className="btn btnPrimary">Create</button>
-              <div className="muted smallText">After creating, click “Edit Nodes”.</div>
+              <button className="btn btnPrimary">Create Campaign</button>
+              <div className="muted smallText">After launch, open “Edit Mission Nodes”.</div>
             </form>
           </div>
 
           <div className="subPanel">
-            <h2 className="subTitle">Your Stories</h2>
+            <h2 className="subTitle">Your Campaigns</h2>
 
             {loading ? <div className="alert ok">Loading…</div> : null}
             {(!loading && stories.length === 0) ? (
               <div className="empty">
-                <div className="emptyTitle">No stories yet.</div>
-                <div className="muted">Create your first one on the left.</div>
+                <div className="emptyTitle">No campaigns yet.</div>
+                <div className="muted">Create your first mission log on the left.</div>
               </div>
             ) : null}
 
@@ -290,7 +290,7 @@ export default function Dashboard() {
                     </div>
                     <div className="chip small">
                       <span className="chipDot" />
-                      {s.isPublished ? "published" : "draft"}
+                      {s.isPublished ? "broadcast" : "draft"}
                     </div>
                   </div>
                   <div className="storyDesc">{s.description}</div>
@@ -302,7 +302,7 @@ export default function Dashboard() {
                   </div>
                   <div className="storyActions">
                     <Link className="btn btnGhost" to={`/stories/${s.id}/play`}>Play</Link>
-                    <Link className="btn btnPrimary" to={`/stories/${s.id}/edit`}>Edit Nodes</Link>
+                    <Link className="btn btnPrimary" to={`/stories/${s.id}/edit`}>Edit Mission Nodes</Link>
                     <button
                       className="btn btnGhost"
                       type="button"
@@ -310,10 +310,10 @@ export default function Dashboard() {
                       onClick={() => togglePublish(s)}
                     >
                       {publishingStoryId === s.id
-                        ? "Saving..."
+                        ? "Syncing..."
                         : s.isPublished
                           ? "Move to Draft"
-                          : "Publish"}
+                          : "Broadcast"}
                     </button>
                     <button
                       className="btn btnGhost"
@@ -321,7 +321,7 @@ export default function Dashboard() {
                       disabled={duplicatingStoryId === s.id}
                       onClick={() => duplicateStory(s.id, s.title)}
                     >
-                      {duplicatingStoryId === s.id ? "Duplicating..." : "Duplicate"}
+                      {duplicatingStoryId === s.id ? "Cloning..." : "Clone"}
                     </button>
                     <button
                       className="btn btnGhost"

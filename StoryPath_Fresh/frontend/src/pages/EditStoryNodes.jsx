@@ -338,10 +338,10 @@ export default function EditStoryNodes() {
       <div className="panel animIn">
         <div className="panelHeader">
           <div>
-            <div className="kicker">NODE FORGE</div>
-            <h1 className="panelBigTitle">Edit Nodes</h1>
+            <div className="kicker">MISSION NODE FORGE</div>
+            <h1 className="panelBigTitle">Edit Mission Nodes</h1>
             <p className="panelText">
-              Story: <span className="strong">{story?.title || `#${id}`}</span>
+              Campaign: <span className="strong">{story?.title || `#${id}`}</span>
             </p>
           </div>
           <button className="btn btnGhost" onClick={load}>Reload</button>
@@ -377,8 +377,8 @@ export default function EditStoryNodes() {
         <div className="subPanel" style={{ marginBottom: "16px" }}>
           <div className="panelHeader">
             <div>
-              <div className="kicker">Story Graph View</div>
-              <h2 className="subTitle" style={{ margin: 0 }}>Branching Map</h2>
+              <div className="kicker">Campaign Graph View</div>
+              <h2 className="subTitle" style={{ margin: 0 }}>Starlane Branch Map</h2>
             </div>
             <div className="chip small">
               <span className="chipDot" />
@@ -402,7 +402,7 @@ export default function EditStoryNodes() {
                     refY="4"
                     orient="auto"
                   >
-                    <path d="M0,0 L10,4 L0,8 z" fill="rgba(75,210,255,.82)" />
+                    <path d="M0,0 L10,4 L0,8 z" fill="rgba(255,204,102,.82)" />
                   </marker>
                 </defs>
 
@@ -445,7 +445,7 @@ export default function EditStoryNodes() {
 
         <div className="grid2">
           <div className="subPanel">
-            <h2 className="subTitle">Add Node</h2>
+            <h2 className="subTitle">Add Mission Node</h2>
             <form className="form" onSubmit={addNode}>
               <div className="field">
                 <label>Content</label>
@@ -462,19 +462,19 @@ export default function EditStoryNodes() {
                 <span>Set as Start Node</span>
               </label>
 
-              <button className="btn btnPrimary">Add Node</button>
+              <button className="btn btnPrimary">Add Mission Node</button>
               <div className="muted smallText">
-                Next: add choices between nodes (we can add UI for that next).
+                Next: link routes between nodes to build your starlane tree.
               </div>
             </form>
           </div>
 
           <div className="subPanel">
-            <h2 className="subTitle">Nodes</h2>
+            <h2 className="subTitle">Mission Nodes</h2>
             {nodes.length === 0 ? (
               <div className="empty">
-                <div className="emptyTitle">No nodes yet.</div>
-                <div className="muted">Add the start node first.</div>
+                <div className="emptyTitle">No mission nodes yet.</div>
+                <div className="muted">Add a launch node first.</div>
               </div>
             ) : (
               <div className="cards">
@@ -483,7 +483,7 @@ export default function EditStoryNodes() {
                     <div className="nodeTop">
                       <div className="chip small">
                         <span className="chipDot" />
-                        Node #{n.id}{story?.startNodeId === n.id ? " • START" : ""}
+                        Node #{n.id}{story?.startNodeId === n.id ? " • LAUNCH" : ""}
                       </div>
                       <div className="rowBtns">
                         <button
@@ -492,13 +492,13 @@ export default function EditStoryNodes() {
                           disabled={settingStartId === n.id}
                           onClick={() => setAsStart(n.id)}
                         >
-                          {settingStartId === n.id ? "Setting..." : "Set Start"}
+                          {settingStartId === n.id ? "Assigning..." : "Set Launch"}
                         </button>
                       </div>
                     </div>
 
                     <div className="field">
-                      <label>Node Content</label>
+                      <label>Mission Content</label>
                       <textarea
                         value={nodeDrafts[n.id]?.content || ""}
                         onChange={(e) =>
@@ -513,7 +513,7 @@ export default function EditStoryNodes() {
                     </div>
 
                     <div className="field">
-                      <label>Choices (one per line: Label -&gt; NodeId)</label>
+                      <label>Route Choices (one per line: Label -&gt; NodeId)</label>
                       <textarea
                         value={nodeDrafts[n.id]?.optionsText || ""}
                         onChange={(e) =>
@@ -532,7 +532,7 @@ export default function EditStoryNodes() {
                         disabled={savingNodeId === n.id}
                         onClick={() => saveNode(n.id)}
                       >
-                        {savingNodeId === n.id ? "Saving..." : "Save Node"}
+                        {savingNodeId === n.id ? "Syncing..." : "Save Node"}
                       </button>
 
                       <button
