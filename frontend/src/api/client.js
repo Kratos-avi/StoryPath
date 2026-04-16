@@ -11,7 +11,7 @@ function normalizeApiBaseUrl(value) {
 const runtimeDefaultBaseUrl =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:5000/api"
-    : "https://storypath-backend.onrender.com/api";
+    : `${window.location.origin}/api`;
 
 const apiBaseUrl = normalizeApiBaseUrl(
   import.meta.env.VITE_API_BASE_URL ||

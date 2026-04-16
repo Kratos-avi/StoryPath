@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 require("dotenv").config();
 const cors = require("cors");
 const helmet = require("helmet");
@@ -17,6 +18,7 @@ validateEnv();
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
 const allowedOrigins = getAllowedOrigins();
+const frontendDistPath = path.resolve(__dirname, "../../frontend/dist");
 
 app.set("trust proxy", 1);
 
@@ -91,6 +93,18 @@ app.get("/api/health", (req, res) => {
 app.use("/api/stories", storyRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", nodeRoutes);
+
+if (isProduction) {
+  app.use(express.static(frontendDistPath));
+
+  app.get(/^(?!\/api).*/, (req, res, next) => {
+    if (req.method !== "GET") return next();
+
+    res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
+      if (err) next(err);
+    });
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });

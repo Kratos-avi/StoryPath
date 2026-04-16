@@ -1,17 +1,7 @@
 services:
   - type: web
-    name: storypath-backend
+    name: storypath-app
     env: node
     rootDir: backend
-    buildCommand: npm install && npx prisma generate
+    buildCommand: npm install && npx prisma generate && cd ../frontend && npm install && npm run build
     startCommand: npm start
-
-  - type: static
-    name: storypath-frontend
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
