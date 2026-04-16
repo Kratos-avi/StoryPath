@@ -24,13 +24,11 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await api.post("/auth/login", { email, password });
-      console.log("[Auth] Login response:", { status: res.status, data: res.data });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       setUser(res.data.user);
       return { ok: true };
     } catch (e) {
-      console.error("[Auth] Login error:", { status: e?.response?.status, data: e?.response?.data, message: e.message });
       const msg = e?.response?.data?.message || "Login failed";
       return { ok: false, message: msg };
     } finally {
@@ -42,17 +40,14 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await api.post("/auth/register", { name, email, password });
-      console.log("[Auth] Register response:", { status: res.status, data: res.data });
       if (!res.data?.token || !res.data?.user) {
-        console.error("[Auth] Register response missing token or user:", res.data);
-        return { ok: false, message: "Registration response missing token or user. Check browser console." };
+        return { ok: false, message: "Registration response missing token or user." };
       }
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       setUser(res.data.user);
       return { ok: true };
     } catch (e) {
-      console.error("[Auth] Register error:", { status: e?.response?.status, data: e?.response?.data, message: e.message });
       const msg = e?.response?.data?.message || "Register failed";
       return { ok: false, message: msg };
     } finally {

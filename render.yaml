@@ -21,7 +21,7 @@ services:
         # Format: mysql://user:pass@host:port/database?ssl-mode=REQUIRED
         scope: runtime
       - key: FRONTEND_ORIGIN
-        # ⚠️ REQUIRED: Your production frontend URL (for CORS)
+        # Recommended: Your production frontend URL (for explicit CORS allowlist)
         # In unified deployment, this is the same as the service URL
         # Example: https://storypath.onrender.com
         scope: runtime

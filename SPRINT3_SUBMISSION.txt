@@ -1,0 +1,15 @@
+Practical Lab - Sprint 3 Review Submission
+
+Student Repository URL:
+https://github.com/Kratos-avi/StoryPath
+
+Live Deployment URL:
+https://storypath-2phw.onrender.com
+
+Sprint Covered:
+Sprint 3 (Integration) - API Integration, Routing, Final Deployment
+
+Verification Notes:
+- Application is deployed and publicly accessible.
+- Backend health endpoint: /api/health
+- Frontend and backend are integrated in one Render service.

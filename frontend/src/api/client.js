@@ -1,10 +1,12 @@
 import axios from "axios";
 
-console.log("[API Client] Initializing with environment:", {
-  VITE_API_URL: import.meta.env.VITE_API_URL,
-  MODE: import.meta.env.MODE,
-  origin: window.location.origin,
-});
+const isDev = import.meta.env.DEV;
+
+function logDebug(...args) {
+  if (isDev) {
+    console.log(...args);
+  }
+}
 
 /**
  * Normalize API base URL - ensure it ends with /api but not //api
@@ -35,7 +37,7 @@ function getApiBaseUrl() {
   // If explicitly configured via environment, use it
   const envUrl = import.meta.env.VITE_API_URL?.trim();
   if (envUrl) {
-    console.log("[API Client] Using environment URL:", envUrl);
+    logDebug("[API Client] Using environment URL:", envUrl);
     return normalizeApiBaseUrl(envUrl);
   }
 
@@ -44,18 +46,17 @@ function getApiBaseUrl() {
   
   // Local development
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    console.log("[API Client] Using localhost for development");
+    logDebug("[API Client] Using localhost for development");
     return "http://localhost:5000/api";
   }
 
   // Production: same-origin is best (backend serves both frontend + API)
-  console.log("[API Client] Using same-origin /api");
+  logDebug("[API Client] Using same-origin /api");
   return `${origin}/api`;
 }
 
 const apiBaseUrl = getApiBaseUrl();
-
-console.log("[API Client] Final API base URL:", apiBaseUrl);
+logDebug("[API Client] Final API base URL:", apiBaseUrl);
 
 const api = axios.create({
   baseURL: apiBaseUrl,
@@ -71,14 +72,14 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  console.log(`[API Client] ${config.method.toUpperCase()} ${config.url}`);
+  logDebug(`[API Client] ${config.method.toUpperCase()} ${config.url}`);
   return config;
 });
 
 // Response interceptor: Handle responses and errors
 api.interceptors.response.use(
   (response) => {
-    console.log(`[API Client] ✓ ${response.status} ${response.config.url}`);
+    logDebug(`[API Client] ✓ ${response.status} ${response.config.url}`);
     return response;
   },
   (error) => {
@@ -95,7 +96,7 @@ api.interceptors.response.use(
 
     // Handle 401 Unauthorized - clear auth and redirect
     if (status === 401) {
-      console.log("[API Client] Clearing auth token (401 Unauthorized)");
+      logDebug("[API Client] Clearing auth token (401 Unauthorized)");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.dispatchEvent(new Event("auth:logout"));
