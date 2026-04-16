@@ -34,6 +34,7 @@ if (!isProduction) {
   app.use(morgan("dev"));
 }
 
+// CORS policy supports explicit allowlist plus Render preview domains.
 app.use(
   cors({
     origin(origin, callback) {
@@ -70,6 +71,7 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Apply broader API limiter first, then stricter auth limiter for login/register endpoints.
 app.use("/api", apiLimiter);
 app.use("/api/auth", authLimiter);
 
@@ -94,6 +96,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api", nodeRoutes);
 
 if (isProduction) {
+  // In production, backend serves both API and built SPA assets.
   app.use(express.static(frontendDistPath));
 
   app.get(/^(?!\/api).*/, (req, res, next) => {

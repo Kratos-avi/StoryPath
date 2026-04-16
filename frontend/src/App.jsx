@@ -16,6 +16,7 @@ export default function App() {
       <Navbar />
       <div className="pageWrap">
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/stories" element={<Stories />} />
           <Route path="/stories/:id/play" element={<PlayStory />} />
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+          {/* Protected routes (authentication required) */}
           <Route
             path="/dashboard"
             element={
@@ -41,6 +43,7 @@ export default function App() {
             }
           />
 
+          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
