@@ -24,6 +24,7 @@ Create a `.env` file in `frontend/` based on `.env.example`.
 Required:
 
 - `VITE_API_BASE_URL` (example: `http://localhost:5000/api`)
+- `VITE_API_URL` (legacy alias, also supported)
 - `VITE_API_TIMEOUT_MS` (example: `10000`)
 
 ## Scripts
