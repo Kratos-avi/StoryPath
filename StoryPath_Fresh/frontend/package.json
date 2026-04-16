@@ -1,0 +1,8 @@
+{
+  "name": "storypath-render-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "npm --prefix ../../frontend ci && npm --prefix ../../frontend run build && rm -rf dist && cp -R ../../frontend/dist ./dist"
+  }
+}
