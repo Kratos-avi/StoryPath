@@ -1,5 +1,5 @@
 const requiredInAll = ["DATABASE_URL"];
-const requiredInProd = ["JWT_SECRET", "FRONTEND_ORIGIN"];
+const requiredInProd = ["JWT_SECRET"];
 
 function missingKeys(keys) {
   return keys.filter((key) => !process.env[key] || !String(process.env[key]).trim());
@@ -19,6 +19,10 @@ function validateEnv() {
   if (process.env.NODE_ENV !== "production" && !process.env.JWT_SECRET) {
     console.warn("[env] JWT_SECRET is not set. Using development fallback secret.");
   }
+
+  if (process.env.NODE_ENV === "production" && !process.env.FRONTEND_ORIGIN) {
+    console.warn("[env] FRONTEND_ORIGIN is not set. Falling back to Render/local allowed origins.");
+  }
 }
 
 function getJwtSecret() {
@@ -28,7 +32,13 @@ function getJwtSecret() {
 
 function getAllowedOrigins() {
   if (!process.env.FRONTEND_ORIGIN) {
-    return ["http://localhost:5173"];
+    const fallback = ["http://localhost:5173"];
+
+    if (process.env.RENDER_EXTERNAL_URL) {
+      fallback.push(process.env.RENDER_EXTERNAL_URL);
+    }
+
+    return fallback;
   }
 
   return process.env.FRONTEND_ORIGIN.split(",")
