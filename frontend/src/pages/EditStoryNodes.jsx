@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
 
@@ -24,7 +24,7 @@ export default function EditStoryNodes() {
       .filter((option) => option.text && Number.isFinite(option.targetNodeId));
   };
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setError("");
     setMsg("");
     try {
@@ -36,10 +36,13 @@ export default function EditStoryNodes() {
     } catch (e) {
       setError(e?.response?.data?.message || "Failed to load story/nodes");
     }
-  };
+  }, [id]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => {
+    // The first data load intentionally hydrates component state after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, [load]);
 
   const addNode = async (e) => {
     e.preventDefault();

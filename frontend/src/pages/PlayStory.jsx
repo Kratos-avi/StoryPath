@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
 
@@ -20,7 +20,7 @@ export default function PlayStory() {
       .filter((option) => option.text && Number.isFinite(option.targetNodeId));
   };
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setError("");
     try {
       const s = await api.get(`/stories/${id}`);
@@ -32,7 +32,7 @@ export default function PlayStory() {
     } catch (e) {
       setError(e?.response?.data?.message || "Cannot play this story yet (missing start node).");
     }
-  };
+  }, [id]);
 
   const chooseOption = async (targetNodeId) => {
     setError("");
@@ -48,8 +48,9 @@ export default function PlayStory() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const options = getNodeOptions(node?.options);
 
