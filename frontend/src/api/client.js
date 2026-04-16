@@ -13,10 +13,22 @@ function normalizeApiBaseUrl(value) {
   return `${trimmed.replace(/\/+$/, "")}/api`;
 }
 
-const runtimeDefaultBaseUrl =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:5000/api"
-    : `${window.location.origin}/api`;
+function getRuntimeDefaultBaseUrl() {
+  const { hostname, origin } = window.location;
+  const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+
+  if (isLocalhost) return "http://localhost:5000/api";
+
+  // If frontend is on a separate Render static service, default to backend web service.
+  if (hostname.endsWith(".onrender.com") && hostname !== "storypath-app.onrender.com") {
+    return "https://storypath-app.onrender.com/api";
+  }
+
+  // Same-origin API works when frontend is served by backend web service.
+  return `${origin}/api`;
+}
+
+const runtimeDefaultBaseUrl = getRuntimeDefaultBaseUrl();
 
 const apiBaseUrl = normalizeApiBaseUrl(
   import.meta.env.VITE_API_BASE_URL ||

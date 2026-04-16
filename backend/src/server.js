@@ -73,12 +73,11 @@ const authLimiter = rateLimit({
 app.use("/api", apiLimiter);
 app.use("/api/auth", authLimiter);
 
-// ✅ Root route (adds clean homepage)
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.json({
     message: "StoryPath API is running",
     status: "success",
-    version: "1.0.0"
+    version: "1.0.0",
   });
 });
 
