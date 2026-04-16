@@ -1,9 +1,23 @@
 import axios from "axios";
 
-const apiBaseUrl =
+function normalizeApiBaseUrl(value) {
+  const trimmed = String(value || "").trim();
+
+  if (!trimmed) return "";
+  if (trimmed.endsWith("/api")) return trimmed;
+  return `${trimmed.replace(/\/$/, "")}/api`;
+}
+
+const runtimeDefaultBaseUrl =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5000/api"
+    : "https://storypath-backend.onrender.com/api";
+
+const apiBaseUrl = normalizeApiBaseUrl(
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL ||
-  "https://storypath-backend.onrender.com/api";
+  runtimeDefaultBaseUrl
+);
 
 const api = axios.create({
   baseURL: apiBaseUrl,
