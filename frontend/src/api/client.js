@@ -4,8 +4,13 @@ function normalizeApiBaseUrl(value) {
   const trimmed = String(value || "").trim();
 
   if (!trimmed) return "";
-  if (trimmed.endsWith("/api")) return trimmed;
-  return `${trimmed.replace(/\/$/, "")}/api`;
+
+  // Accept both .../api and .../api/ without duplicating the segment.
+  if (/\/api\/?$/i.test(trimmed)) {
+    return trimmed.replace(/\/+$/, "");
+  }
+
+  return `${trimmed.replace(/\/+$/, "")}/api`;
 }
 
 const runtimeDefaultBaseUrl =
