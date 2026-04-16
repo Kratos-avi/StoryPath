@@ -23,11 +23,24 @@ exports.register = async (req, res) => {
       data: { name, email, password: hashed },
     });
 
-    const token = jwt.sign(
-      { userId: user.id },
-      getJwtSecret(),
-      { expiresIn: "1d" }
-    );
+    let token;
+    try {
+      const secret = getJwtSecret();
+      if (!secret || secret.trim() === "") {
+        throw new Error("JWT_SECRET is not configured in environment variables");
+      }
+      token = jwt.sign(
+        { userId: user.id },
+        secret,
+        { expiresIn: "1d" }
+      );
+      if (!token) {
+        throw new Error("Token generation returned empty value");
+      }
+    } catch (jwtErr) {
+      console.error("[Auth] JWT token generation failed:", jwtErr.message);
+      return res.status(500).json({ message: "Failed to generate authentication token. Contact support." });
+    }
 
     res.status(201).json({
       message: "User registered successfully",
@@ -35,6 +48,7 @@ exports.register = async (req, res) => {
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
+    console.error("[Auth] Register error:", err.message);
     res.status(500).json({ message: "Server error", error: String(err) });
   }
 };
@@ -54,11 +68,24 @@ exports.login = async (req, res) => {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { userId: user.id },
-      getJwtSecret(),
-      { expiresIn: "1d" }
-    );
+    let token;
+    try {
+      const secret = getJwtSecret();
+      if (!secret || secret.trim() === "") {
+        throw new Error("JWT_SECRET is not configured in environment variables");
+      }
+      token = jwt.sign(
+        { userId: user.id },
+        secret,
+        { expiresIn: "1d" }
+      );
+      if (!token) {
+        throw new Error("Token generation returned empty value");
+      }
+    } catch (jwtErr) {
+      console.error("[Auth] JWT token generation failed:", jwtErr.message);
+      return res.status(500).json({ message: "Failed to generate authentication token. Contact support." });
+    }
 
     res.json({
       message: "Login successful",
@@ -66,6 +93,7 @@ exports.login = async (req, res) => {
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
+    console.error("[Auth] Login error:", err.message);
     res.status(500).json({ message: "Server error", error: String(err) });
   }
 };
