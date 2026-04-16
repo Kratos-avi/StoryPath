@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/client";
 
+// Stories page loads the public archive and gives users a one-click play entry point.
 export default function Stories() {
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Refresh the public story list from the API.
   const load = async () => {
     setLoading(true);
     setError("");

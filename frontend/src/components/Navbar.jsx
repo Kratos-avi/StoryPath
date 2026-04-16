@@ -2,13 +2,16 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/useAuth";
 
+// Navbar shows public links, auth links, and a responsive mobile menu.
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
+  // Highlight the current route so navigation feels obvious.
   const isActive = (path) => (pathname === path ? "navLink active" : "navLink");
 
+  // Close the menu after navigation on small screens.
   const closeMenu = () => setIsOpen(false);
 
   return (

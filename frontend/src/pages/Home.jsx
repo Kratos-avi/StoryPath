@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
+// Home page introduces the app and points users to play or create stories.
 export default function Home() {
   const { user } = useAuth();
 
   return (
     <div className="container">
+      {/* Hero section gives the app its main first impression. */}
       <section className="hero">
         <div className="heroLeft">
           <div className="kicker">Structured Story Design</div>
@@ -78,6 +80,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Public library section highlights playable stories. */}
       <section className="homeBand animIn">
         <div className="homeBandHeader blue">
           <h2 className="panelTitle">Public Library</h2>
@@ -106,6 +109,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Workflow section explains the core product flow in simple steps. */}
       <section className="homeBand animIn delay1">
         <div className="homeBandHeader red">
           <h2 className="panelTitle">Workflow</h2>

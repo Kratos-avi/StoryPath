@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api/client";
 import { useAuth } from "../context/useAuth";
 
+// Dashboard is the creator workspace for managing story records.
 export default function Dashboard() {
   const { user } = useAuth();
 
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [editingStoryId, setEditingStoryId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
 
+  // Fetch only the signed-in user's stories.
   const loadMine = async () => {
     setLoading(true);
     setError("");
@@ -31,6 +33,7 @@ export default function Dashboard() {
 
   useEffect(() => { loadMine(); }, []);
 
+  // Create a new story record before the user starts adding nodes.
   const createStory = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -49,6 +52,7 @@ export default function Dashboard() {
     }
   };
 
+  // Start inline rename mode for a story card.
   const startEditStory = (story) => {
     setEditingStoryId(story.id);
     setEditTitle(story.title);
@@ -59,6 +63,7 @@ export default function Dashboard() {
     setEditTitle("");
   };
 
+  // Save the updated title back to the backend.
   const saveStoryTitle = async (storyId) => {
     setMsg("");
     setError("");
@@ -74,6 +79,7 @@ export default function Dashboard() {
     }
   };
 
+  // Delete a story only after the user confirms the action.
   const deleteStory = async (storyId) => {
     setMsg("");
     setError("");

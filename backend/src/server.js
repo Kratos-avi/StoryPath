@@ -1,3 +1,4 @@
+// Express app bootstrap for the API, auth, and production SPA hosting.
 const express = require("express");
 const path = require("path");
 require("dotenv").config();
@@ -15,6 +16,7 @@ const { validateEnv, getAllowedOrigins } = require("./config/env");
 
 validateEnv();
 
+// Create the server and apply shared production settings.
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
 const allowedOrigins = getAllowedOrigins();
@@ -31,6 +33,7 @@ app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 
 if (!isProduction) {
+  // Dev logs stay off in production to keep the console clean.
   app.use(morgan("dev"));
 }
 
@@ -76,6 +79,7 @@ app.use("/api", apiLimiter);
 app.use("/api/auth", authLimiter);
 
 app.get("/api", (req, res) => {
+  // Simple API status route used for quick checks in class and on Render.
   res.json({
     message: "StoryPath API is running",
     status: "success",
@@ -84,6 +88,7 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
+  // Health check is used by Render and by the demo checklist.
   res.json({
     status: "ok",
     environment: process.env.NODE_ENV || "development",
@@ -109,10 +114,12 @@ if (isProduction) {
 }
 
 app.use((req, res) => {
+  // Keep unknown routes predictable for the frontend and the API.
   res.status(404).json({ message: "Route not found" });
 });
 
 app.use((err, req, res, next) => {
+  // Central error handler keeps server responses consistent.
   const status = err.status || 500;
   const message = status === 500 ? "Internal server error" : err.message;
 
@@ -125,10 +132,12 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
+  // Log once at startup so deployment checks can confirm the server is live.
   console.log(`Server running on port ${PORT}`);
 });
 
 async function gracefulShutdown(signal) {
+  // Close the server and Prisma connection cleanly on host shutdown.
   console.log(`${signal} received. Shutting down gracefully...`);
 
   server.close(async () => {

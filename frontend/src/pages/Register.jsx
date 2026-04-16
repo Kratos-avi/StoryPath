@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
+// Register page creates a new account and signs the user in right away.
 export default function Register() {
   const nav = useNavigate();
   const { register, loading } = useAuth();
@@ -11,6 +12,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // Submit new account details to the auth provider.
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");

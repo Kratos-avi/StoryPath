@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
 
+// PlayStory walks a reader through one branch at a time using the story node graph.
 export default function PlayStory() {
   const { id } = useParams();
   const [story, setStory] = useState(null);
@@ -10,6 +11,7 @@ export default function PlayStory() {
   const [error, setError] = useState("");
   const [loadingNext, setLoadingNext] = useState(false);
 
+  // Convert stored option data into the shape the UI needs for rendering buttons.
   const getNodeOptions = (rawOptions) => {
     if (!Array.isArray(rawOptions)) return [];
     return rawOptions
@@ -20,6 +22,7 @@ export default function PlayStory() {
       .filter((option) => option.text && Number.isFinite(option.targetNodeId));
   };
 
+  // Load the story metadata and the first playable node.
   const load = useCallback(async () => {
     setError("");
     try {
@@ -34,6 +37,7 @@ export default function PlayStory() {
     }
   }, [id]);
 
+  // Move to the selected next node and append it to the current path history.
   const chooseOption = async (targetNodeId) => {
     setError("");
     setLoadingNext(true);

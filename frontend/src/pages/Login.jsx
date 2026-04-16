@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
+// Login page sends credentials to the auth context and redirects after success.
 export default function Login() {
   const nav = useNavigate();
   const { login, loading } = useAuth();
@@ -10,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // Submit the form and hand off session creation to the auth provider.
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");

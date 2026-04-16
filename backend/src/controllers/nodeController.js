@@ -1,5 +1,6 @@
 const prisma = require("../utils/prismaClient");
 
+// Node controller manages the branching story nodes and keeps ownership checks on writes.
 // GET /api/stories/:storyId/nodes
 exports.getNodesForStory = async (req, res) => {
   try {
@@ -41,10 +42,11 @@ exports.createNode = async (req, res) => {
     const storyId = Number(req.params.storyId);
     const { content, options, isStart } = req.body;
 
+    // Make sure the story exists before adding a new node.
     const story = await prisma.story.findUnique({ where: { id: storyId } });
     if (!story) return res.status(404).json({ message: "Story not found" });
 
-    // owner check
+    // Only the story owner can edit its nodes.
     if (story.userId !== req.userId) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -61,7 +63,7 @@ exports.createNode = async (req, res) => {
       },
     });
 
-    // Set start node automatically for first node or explicitly when requested.
+    // The first node becomes the start node automatically unless a start node already exists.
     if (!story.startNodeId || isStart === true) {
       await prisma.story.update({
         where: { id: storyId },
@@ -88,7 +90,7 @@ exports.updateNode = async (req, res) => {
     const story = await prisma.story.findUnique({ where: { id: node.storyId } });
     if (!story) return res.status(404).json({ message: "Story not found" });
 
-    // owner check
+    // Only the owner can update the node content and branching choices.
     if (story.userId !== req.userId) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -119,11 +121,12 @@ exports.deleteNode = async (req, res) => {
     const story = await prisma.story.findUnique({ where: { id: node.storyId } });
     if (!story) return res.status(404).json({ message: "Story not found" });
 
-    // owner check
+    // Only the owner can delete a node from the story.
     if (story.userId !== req.userId) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
+    // If the deleted node was the start node, promote the next available node.
     const wasStartNode = story.startNodeId === id;
 
     await prisma.storyNode.delete({ where: { id } });

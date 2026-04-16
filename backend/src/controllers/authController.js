@@ -3,20 +3,23 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { getJwtSecret } = require("../config/env");
 
-// REGISTER
+// Auth controller handles account creation and login, then returns a signed JWT.
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    // Require every field before creating a user.
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Prevent duplicate accounts for the same email address.
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
+    // Store only a hashed password, never the raw password.
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
@@ -25,6 +28,7 @@ exports.register = async (req, res) => {
 
     let token;
     try {
+      // Issue a JWT so the frontend can persist the logged-in session.
       const secret = getJwtSecret();
       if (!secret || secret.trim() === "") {
         throw new Error("JWT_SECRET is not configured in environment variables");
@@ -42,6 +46,7 @@ exports.register = async (req, res) => {
       return res.status(500).json({ message: "Failed to generate authentication token. Contact support." });
     }
 
+    // Return a minimal safe user object plus the new token.
     res.status(201).json({
       message: "User registered successfully",
       token,
@@ -53,23 +58,27 @@ exports.register = async (req, res) => {
   }
 };
 
-// LOGIN
+// Login validates the password against the stored hash and returns a fresh JWT.
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Both values are required for authentication.
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
     }
 
+    // Look up the account by email before checking the password hash.
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
+    // Compare the submitted password with the stored hash.
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: "Invalid credentials" });
 
     let token;
     try {
+      // Generate a fresh token for the session after password verification succeeds.
       const secret = getJwtSecret();
       if (!secret || secret.trim() === "") {
         throw new Error("JWT_SECRET is not configured in environment variables");
@@ -87,6 +96,7 @@ exports.login = async (req, res) => {
       return res.status(500).json({ message: "Failed to generate authentication token. Contact support." });
     }
 
+    // Send back only the data the client needs for session state.
     res.json({
       message: "Login successful",
       token,

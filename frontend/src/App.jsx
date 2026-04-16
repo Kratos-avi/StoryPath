@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import PlayStory from "./pages/PlayStory.jsx";
 import EditStoryNodes from "./pages/EditStoryNodes.jsx";
 
+// App defines the public pages plus the auth-protected dashboard and editor routes.
 export default function App() {
   return (
     <div className="appRoot">

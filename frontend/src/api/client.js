@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Axios wrapper keeps API URL resolution, auth headers, and error handling in one place.
 /**
  * Normalize API base URL - ensure it ends with /api but not //api
  */
@@ -54,7 +55,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: Add JWT token to all requests
+// Request interceptor: attach the JWT token automatically when the user is signed in.
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -63,7 +64,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor: Handle responses and errors
+// Response interceptor: keep API errors centralized and clear the session on 401.
 api.interceptors.response.use(
   (response) => {
     return response;

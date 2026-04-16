@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
 
+// EditStoryNodes is the branching editor for authors to build the decision tree.
 export default function EditStoryNodes() {
   const { id } = useParams();
 
@@ -14,6 +15,7 @@ export default function EditStoryNodes() {
   const [isStart, setIsStart] = useState(false);
   const [drafts, setDrafts] = useState({});
 
+  // Normalize stored choice data into a consistent list for editing.
   const getOptions = (options) => {
     if (!Array.isArray(options)) return [];
     return options
@@ -24,6 +26,7 @@ export default function EditStoryNodes() {
       .filter((option) => option.text && Number.isFinite(option.targetNodeId));
   };
 
+  // Load the story and all of its nodes so the editor stays in sync with the API.
   const load = useCallback(async () => {
     setError("");
     setMsg("");
@@ -44,6 +47,7 @@ export default function EditStoryNodes() {
     load();
   }, [load]);
 
+  // Create a new node for the current story.
   const addNode = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -61,6 +65,7 @@ export default function EditStoryNodes() {
     }
   };
 
+  // Mark a node as the story's entry point.
   const setStartNode = async (nodeId) => {
     setMsg("");
     setError("");
@@ -73,6 +78,7 @@ export default function EditStoryNodes() {
     }
   };
 
+  // Keep one draft object per node so choice edits stay isolated.
   const changeDraft = (nodeId, field, value) => {
     setDrafts((prev) => ({
       ...prev,
@@ -84,6 +90,7 @@ export default function EditStoryNodes() {
     }));
   };
 
+  // Append a choice that links one node to another.
   const addChoice = async (node) => {
     const draft = drafts[node.id] || { text: "", targetNodeId: "" };
     const text = draft.text?.trim();
@@ -113,6 +120,7 @@ export default function EditStoryNodes() {
     }
   };
 
+  // Remove a branching choice by rebuilding the stored options list.
   const removeChoice = async (node, indexToRemove) => {
     setMsg("");
     setError("");
@@ -126,6 +134,7 @@ export default function EditStoryNodes() {
     }
   };
 
+  // Delete a node after the user confirms the action.
   const deleteNode = async (nodeId) => {
     setMsg("");
     setError("");

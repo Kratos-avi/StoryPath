@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../api/client";
 import { AuthContext } from "./auth-context";
 
+// AuthProvider stores the current user, session state, and login/register actions.
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null); // { id, name, email }
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
+    // Restore the last saved user session from localStorage after refresh.
     try {
       const storedUser = localStorage.getItem("user");
       if (storedUser) setUser(JSON.parse(storedUser));
@@ -21,6 +23,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
+    // Login stores the JWT and user profile when the backend accepts the credentials.
     setLoading(true);
     try {
       const res = await api.post("/auth/login", { email, password });
@@ -37,6 +40,7 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (name, email, password) => {
+    // Register follows the same session flow as login so the new user lands signed in.
     setLoading(true);
     try {
       const res = await api.post("/auth/register", { name, email, password });
@@ -56,6 +60,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    // Clear both session tokens so the UI and backend stay in sync.
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
