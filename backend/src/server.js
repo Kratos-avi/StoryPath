@@ -41,6 +41,10 @@ app.use(
         return callback(null, true);
       }
 
+      if (origin.startsWith("https://") && origin.endsWith(".onrender.com")) {
+        return callback(null, true);
+      }
+
       const corsError = new Error("CORS origin not allowed");
       corsError.status = 403;
       return callback(corsError);
